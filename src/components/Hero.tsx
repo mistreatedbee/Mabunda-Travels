@@ -20,6 +20,9 @@ export default function Hero() {
 
       {/* Content */}
       <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-8 text-center pt-28 pb-20">
+        <div className="mx-auto mb-6 w-24 h-24 rounded-full overflow-hidden border-2 border-white/30 shadow-xl animate-fade-in">
+          <img src="/logo.jpeg" alt="Mabunda Travel & Tours logo" className="w-full h-full object-cover" />
+        </div>
         <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/25 rounded-full px-4 py-1.5 mb-6 animate-fade-in">
           <MapPin size={14} className="text-gold" />
           <span className="text-white/90 text-xs sm:text-sm font-medium tracking-wide">

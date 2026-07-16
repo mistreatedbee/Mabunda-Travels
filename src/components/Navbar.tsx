@@ -31,10 +31,12 @@ export default function Navbar() {
       }`}
     >
       <nav className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between">
-        <a href="#home" className="flex items-center gap-2.5 group">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gold to-forest-900 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
-            <span className="font-display text-white text-lg font-bold">M</span>
-          </div>
+        <a href="#home" className="flex items-center gap-3 group">
+          <img
+            src="/logo.jpeg"
+            alt="Mabunda Travel & Tours logo"
+            className="w-10 h-10 rounded-full object-cover shadow-md group-hover:scale-105 transition-transform"
+          />
           <div className="flex flex-col leading-none">
             <span className={`font-display text-lg font-semibold tracking-wide transition-colors ${scrolled ? 'text-forest-900' : 'text-white'}`}>
               Mabunda

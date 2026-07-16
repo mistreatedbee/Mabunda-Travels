@@ -27,10 +27,12 @@ export default function Footer() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gold to-forest-800 flex items-center justify-center">
-                <span className="font-display text-white text-lg font-bold">M</span>
-              </div>
+            <div className="flex items-center gap-3 mb-4">
+              <img
+                src="/logo.jpeg"
+                alt="Mabunda Travel & Tours logo"
+                className="w-12 h-12 rounded-full object-cover shadow-lg"
+              />
               <div>
                 <span className="font-display text-white text-lg font-semibold">Mabunda</span>
                 <span className="block text-gold text-[10px] tracking-[0.2em] uppercase">Travel & Tours</span>
