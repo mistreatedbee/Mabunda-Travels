@@ -20,7 +20,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local environment files
 .env
-# Ignore local env and Bolt config
-.env
+.env.local
+.env.*.local
 .bolt/
