@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Phone, Mail, MapPin, Send, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 import { COMPANY } from '../lib/company';
 
 const DESTINATION_OPTIONS = [
@@ -47,16 +46,29 @@ export default function Contact() {
       message: form.message.trim() || null,
     };
 
-    const { error } = await supabase.from('bookings').insert(payload);
+    try {
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
 
-    if (error) {
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        const message = data?.error || 'Something went wrong submitting your enquiry. Please try again or contact us on WhatsApp.';
+        setStatus('error');
+        setErrorMsg(message);
+        return;
+      }
+
+      setStatus('success');
+      setForm({ full_name: '', email: '', phone: '', travel_date: '', num_travellers: '', destination: '', message: '' });
+    } catch (err) {
       setStatus('error');
-      setErrorMsg('Something went wrong submitting your enquiry. Please try again or contact us on WhatsApp.');
-      return;
+      setErrorMsg('Network error submitting your enquiry. Please check your connection and try again.');
     }
-
-    setStatus('success');
-    setForm({ full_name: '', email: '', phone: '', travel_date: '', num_travellers: '', destination: '', message: '' });
   };
 
   return (
