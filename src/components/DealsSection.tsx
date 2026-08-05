@@ -1,108 +1,124 @@
-import { ArrowRight, Clock, MapPin } from 'lucide-react';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { MapPin, ArrowRight, Smartphone } from 'lucide-react';
+import { ACTIVITIES, type Activity } from '../lib/data';
+import Reveal from './Reveal';
 
-const DEALS = [
-  {
-    title:       'Kruger Safari Adventure',
-    location:     'Kruger National Park',
-    duration:    '3 Days / 2 Nights',
-    image:        'https://images.pexels.com/photos/13142739/pexels-photo-13142739.jpeg?auto=compress&cs=tinysrgb&w=800',
-    badge:       'Best Seller',
-    desc:        'Game drives, bush walks & sunset safaris in the heart of Big Five country.',
-  },
-  {
-    title:       'Panorama Route Explorer',
-    location:    "Blyde River Canyon & God's Window",
-    duration:    '2 Days / 1 Night',
-    image:        'https://images.pexels.com/photos/36168137/pexels-photo-36168137.jpeg?auto=compress&cs=tinysrgb&w=800',
-    badge:       'Scenic',
-    desc:        'Dramatic canyon views, waterfall visits & historic towns along the route.',
-  },
-  {
-    title:       'Weekend Escape Package',
-    location:    'Hazyview & Surrounds',
-    duration:    '2 Days / 1 Night',
-    image:        'https://images.pexels.com/photos/17831034/pexels-photo-17831034.jpeg?auto=compress&cs=tinysrgb&w=800',
-    badge:       'Relaxing',
-    desc:        'Nature trails, river activities & local cuisine for a perfect quick getaway.',
-  },
-  {
-    title:       'Group Wildlife Tour',
-    location:    'Kruger & Mpumalanga',
-    duration:    '4 Days / 3 Nights',
-    image:        'https://images.pexels.com/photos/25754110/pexels-photo-25754110.jpeg?auto=compress&cs=tinysrgb&w=800',
-    badge:       'Groups',
-    desc:        'Group game drives, cultural village visits & team activities for schools & churches.',
-  },
-];
+function ActivityCard({ activity }: { activity: Activity }) {
+  const [flipped, setFlipped] = useState(false);
+
+  return (
+    <Reveal>
+      <article
+        className="activity-card h-80 rounded-2xl overflow-hidden cursor-pointer select-none"
+        onClick={() => setFlipped((f) => !f)}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setFlipped((f) => !f); }}
+        tabIndex={0}
+        aria-label={`${activity.title} — tap to learn more`}
+        role="button"
+        aria-pressed={flipped}
+      >
+        <div className={`activity-card-inner w-full h-full${flipped ? ' flipped' : ''}`}>
+
+          {/* Front face */}
+          <div className="activity-card-face activity-card-front rounded-2xl">
+            <img
+              src={activity.image}
+              alt={activity.title}
+              className="w-full h-full object-cover"
+              loading="lazy"
+              width="400"
+              height="320"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+            <span className="absolute top-4 right-4 bg-gold text-forest-900 text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full">
+              {activity.tag}
+            </span>
+
+            <div className="absolute bottom-0 left-0 right-0 p-5">
+              <div className="flex items-center gap-1.5 text-white/70 text-xs mb-1.5">
+                <MapPin size={12} aria-hidden="true" />
+                <span>{activity.location}</span>
+              </div>
+              <h3 className="font-display text-white font-semibold text-lg leading-snug mb-2">
+                {activity.title}
+              </h3>
+              <p className="text-white/75 text-xs line-clamp-2">{activity.desc}</p>
+
+              <span className="hidden sm:flex items-center gap-1.5 mt-3 text-gold text-[10px] font-semibold uppercase tracking-wide">
+                Hover to explore
+                <ArrowRight size={10} aria-hidden="true" />
+              </span>
+              <span className="flex sm:hidden items-center gap-1.5 mt-3 text-gold text-[10px] font-semibold uppercase tracking-wide">
+                <Smartphone size={10} aria-hidden="true" />
+                Tap to explore
+              </span>
+            </div>
+          </div>
+
+          {/* Back face */}
+          <div className="activity-card-face activity-card-back rounded-2xl bg-forest-900 p-6 flex flex-col justify-between">
+            <div>
+              <span className="inline-block bg-gold/20 text-gold text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full mb-3">
+                {activity.tag}
+              </span>
+              <h3 className="font-display text-white font-bold text-lg leading-snug mb-3">
+                {activity.title}
+              </h3>
+              <p className="text-white/75 text-sm leading-relaxed line-clamp-5">
+                {activity.longDesc}
+              </p>
+            </div>
+            <div className="flex items-center gap-2 mt-4">
+              <MapPin size={13} className="text-gold flex-shrink-0" aria-hidden="true" />
+              <span className="text-white/60 text-xs">{activity.location}</span>
+            </div>
+          </div>
+
+        </div>
+      </article>
+    </Reveal>
+  );
+}
 
 export default function DealsSection() {
   return (
-    <section id="deals" className="py-20 sm:py-24 bg-gray-50">
+    <section id="experiences" aria-label="Experiences and activities" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
-          <div>
-            <span className="text-gold font-semibold text-sm tracking-[0.2em] uppercase">Travel Deals</span>
-            <h2 className="font-display text-3xl sm:text-4xl text-forest-900 font-bold mt-2 leading-tight">
-              Featured packages &amp; experiences
+
+        <Reveal>
+          <div className="text-center mb-12">
+            <span className="inline-block bg-forest-50 text-forest-700 text-xs font-semibold uppercase tracking-[0.15em] px-3 py-1.5 rounded-full mb-4">
+              What we offer
+            </span>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold text-forest-900 mb-3">
+              Extraordinary experiences &amp; activities
             </h2>
+            <p className="text-forest-500 max-w-xl mx-auto text-base">
+              From the Big Five to balloon rides and conservation encounters — hover or tap each card to discover the experience.
+            </p>
           </div>
-          <a href="#contact" className="group flex items-center gap-2 text-forest-700 hover:text-gold text-sm font-medium transition-colors">
-            View all packages
-            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-          </a>
-        </div>
+        </Reveal>
 
-        {/* Cards */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {DEALS.map((deal) => (
-            <div
-              key={deal.title}
-              className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer"
-            >
-              {/* Image */}
-              <div className="relative h-52 overflow-hidden">
-                <img
-                  src={deal.image}
-                  alt={deal.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                <span className="absolute top-3 left-3 bg-gold text-forest-900 text-xs font-bold px-3 py-1.5 rounded-full">
-                  {deal.badge}
-                </span>
-              </div>
-
-              {/* Body */}
-              <div className="p-5">
-                <h3 className="font-display text-lg font-semibold text-forest-900 mb-2 leading-snug">
-                  {deal.title}
-                </h3>
-                <div className="flex items-center gap-3 mb-3 text-xs text-forest-600">
-                  <span className="flex items-center gap-1">
-                    <MapPin size={13} className="text-olive" />
-                    {deal.location}
-                  </span>
-                </div>
-                <p className="text-sm text-forest-600/70 leading-relaxed mb-4 line-clamp-2">
-                  {deal.desc}
-                </p>
-                <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                  <span className="flex items-center gap-1 text-xs text-forest-700 font-medium">
-                    <Clock size={13} className="text-olive" />
-                    {deal.duration}
-                  </span>
-                  <a
-                    href="#contact"
-                    className="text-gold hover:text-gold-dark text-sm font-semibold transition-colors"
-                  >
-                    Enquire →
-                  </a>
-                </div>
-              </div>
-            </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          {ACTIVITIES.map((activity) => (
+            <ActivityCard key={activity.slug} activity={activity} />
           ))}
         </div>
+
+        <Reveal>
+          <div className="text-center mt-12">
+            <Link
+              to="/contact"
+              className="inline-flex items-center gap-2 bg-forest-800 hover:bg-forest-700 text-white font-semibold px-8 py-3.5 rounded-full transition-all hover:shadow-lg hover:scale-105"
+            >
+              Plan my experience
+              <ArrowRight size={18} aria-hidden="true" />
+            </Link>
+          </div>
+        </Reveal>
+
       </div>
     </section>
   );

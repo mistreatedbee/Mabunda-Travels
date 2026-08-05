@@ -12,7 +12,89 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Visible keyboard focus for interactive elements */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #E8943C;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+::selection {
+  background: #E8943C;
+  color: #1E3A1E;
+}
+
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: #f8faf8; }
 ::-webkit-scrollbar-thumb { background: #4A7A2E; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: #2D6B3A; }
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Activity card flip animation ─────────────────────────────────────────── */
+
+.activity-card {
+  perspective: 1200px;
+  position: relative;
+}
+
+.activity-card-inner {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.65s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+/* Desktop hover flip — only fires on devices that support hover */
+@media (hover: hover) and (pointer: fine) {
+  .activity-card:hover .activity-card-inner {
+    transform: rotateY(180deg);
+  }
+}
+
+/* Mobile tap flip via React state */
+.activity-card-inner.flipped {
+  transform: rotateY(180deg);
+}
+
+.activity-card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.activity-card-back {
+  transform: rotateY(180deg);
+}
+
+/* ── Hero / general animations ────────────────────────────────────────────── */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in     { animation: fade-in     0.7s ease both; }
+.animate-fade-in-up  { animation: fade-in-up  0.7s ease both; }

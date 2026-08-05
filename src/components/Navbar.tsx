@@ -1,115 +1,145 @@
 import { useEffect, useState } from 'react';
-import { Menu, X, Phone } from 'lucide-react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Menu, X, Mail } from 'lucide-react';
 import { COMPANY } from '../lib/company';
 
 const NAV_LINKS = [
-  { label: 'Home', href: '#home' },
-  { label: 'Deals', href: '#deals' },
-  { label: 'Lodges', href: '#lodges' },
-  { label: 'About', href: '#about' },
-  { label: 'FAQ', href: '#faq' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Home',     to: '/' },
+  { label: 'About',    to: '/about' },
+  { label: 'Services', to: '/services' },
+  { label: 'Maps',     to: '/maps' },
+  { label: 'Gallery',  to: '/gallery' },
+  { label: 'Contact',  to: '/contact' },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const { pathname } = useLocation();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     onScroll();
-    window.addEventListener('scroll', onScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  const linkColor = scrolled
+    ? 'text-forest-800 hover:text-gold'
+    : 'text-white/90 hover:text-gold';
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-sm py-2.5'
-          : 'bg-transparent py-4'
+        scrolled ? 'bg-white/96 backdrop-blur-md shadow-sm py-2' : 'bg-transparent py-3.5'
       }`}
     >
-      <nav className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between">
-        <a href="#home" className="flex items-center gap-3 group">
+      <nav className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between" aria-label="Main navigation">
+        <Link to="/" className="flex items-center gap-3 group" aria-label="Mabunda Travel & Tours — home">
           <img
             src="/logo.jpeg"
-            alt="Mabunda Travel & Tours logo"
-            className="w-10 h-10 rounded-full object-cover shadow-md group-hover:scale-105 transition-transform"
+            alt=""
+            width="56"
+            height="56"
+            className={`rounded-full object-cover shadow-md group-hover:scale-105 transition-all duration-300 ${
+              scrolled ? 'w-12 h-12' : 'w-14 h-14'
+            }`}
           />
-          <div className="flex flex-col leading-none">
+          <span className="flex flex-col leading-none">
             <span className={`font-display text-lg font-semibold tracking-wide transition-colors ${scrolled ? 'text-forest-900' : 'text-white'}`}>
               Mabunda
             </span>
             <span className="text-gold text-[10px] tracking-[0.2em] uppercase font-medium">
-              Travel & Tours
+              Travel &amp; Tours
             </span>
-          </div>
-        </a>
+          </span>
+        </Link>
 
-        <ul className="hidden lg:flex items-center gap-7">
+        <ul className="hidden lg:flex items-center gap-6 xl:gap-7">
           {NAV_LINKS.map((link) => (
-            <li key={link.href}>
-              <a
-                href={link.href}
-                className={`text-sm font-medium tracking-wide transition-colors relative group ${
-                  scrolled ? 'text-forest-800 hover:text-gold' : 'text-white/90 hover:text-gold'
-                }`}
+            <li key={link.to}>
+              <NavLink
+                to={link.to}
+                className={({ isActive }) =>
+                  `text-sm font-medium tracking-wide transition-colors relative group ${
+                    isActive ? 'text-gold' : linkColor
+                  }`
+                }
               >
                 {link.label}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all duration-300 group-hover:w-full" />
-              </a>
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all duration-300 group-hover:w-full" aria-hidden="true" />
+              </NavLink>
             </li>
           ))}
         </ul>
 
         <div className="hidden lg:flex items-center gap-4">
           <a
-            href={`tel:${COMPANY.phone}`}
+            href={`mailto:${COMPANY.email}`}
             className={`flex items-center gap-2 text-sm transition-colors ${scrolled ? 'text-forest-700 hover:text-gold' : 'text-white/80 hover:text-gold'}`}
           >
-            <Phone size={15} />
-            {COMPANY.phone}
+            <Mail size={15} aria-hidden="true" />
+            <span className="hidden xl:inline">{COMPANY.email}</span>
+            <span className="xl:hidden">Email us</span>
           </a>
-          <a
-            href="#contact"
+          <Link
+            to="/contact"
             className="bg-forest-800 hover:bg-forest-700 text-white font-semibold text-sm px-5 py-2.5 rounded-full transition-all hover:shadow-lg hover:scale-105"
           >
             Plan My Journey
-          </a>
+          </Link>
         </div>
 
         <button
           onClick={() => setOpen(!open)}
           className={`lg:hidden p-2 ${scrolled ? 'text-forest-900' : 'text-white'}`}
-          aria-label="Toggle menu"
+          aria-label={open ? 'Close menu' : 'Open menu'}
+          aria-expanded={open}
+          aria-controls="mobile-menu"
         >
-          {open ? <X size={24} /> : <Menu size={24} />}
+          {open ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
         </button>
       </nav>
 
-      <div className={`lg:hidden overflow-hidden transition-all duration-300 ${open ? 'max-h-[400px] opacity-100' : 'max-h-0 opacity-0'}`}>
+      <div
+        id="mobile-menu"
+        className={`lg:hidden overflow-hidden transition-all duration-300 ${open ? 'max-h-[520px] opacity-100' : 'max-h-0 opacity-0'}`}
+      >
         <div className="bg-white mx-4 mt-3 rounded-2xl p-4 shadow-xl border border-gray-100">
           <ul className="flex flex-col gap-1">
             {NAV_LINKS.map((link) => (
-              <li key={link.href}>
-                <a
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className="block text-forest-800 hover:text-gold py-3 px-4 rounded-lg hover:bg-forest-50 transition-colors text-sm font-medium"
+              <li key={link.to}>
+                <NavLink
+                  to={link.to}
+                  className={({ isActive }) =>
+                    `block py-3 px-4 rounded-lg hover:bg-forest-50 transition-colors text-sm font-medium ${
+                      isActive ? 'text-gold bg-amber-50' : 'text-forest-800 hover:text-gold'
+                    }`
+                  }
                 >
                   {link.label}
-                </a>
+                </NavLink>
               </li>
             ))}
           </ul>
-          <a
-            href="#contact"
-            onClick={() => setOpen(false)}
-            className="mt-3 block text-center bg-forest-800 text-white font-semibold text-sm px-5 py-3 rounded-full"
-          >
-            Plan My Journey
-          </a>
+          <div className="mt-3 pt-3 border-t border-gray-100 space-y-2">
+            <a
+              href={`mailto:${COMPANY.email}`}
+              className="block py-2.5 px-4 text-forest-600 hover:text-gold text-sm transition-colors truncate"
+            >
+              {COMPANY.email}
+            </a>
+            <Link
+              to="/contact"
+              className="block text-center bg-forest-800 text-white font-semibold text-sm px-5 py-3 rounded-full"
+            >
+              Plan My Journey
+            </Link>
+          </div>
         </div>
       </div>
     </header>
