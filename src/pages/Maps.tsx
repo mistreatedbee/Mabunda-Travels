@@ -1,10 +1,13 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, ArrowRight, TreePine } from 'lucide-react';
+import { MapPin, ArrowRight, TreePine, Loader2 } from 'lucide-react';
 import Seo from '../components/Seo';
 import PageHeader from '../components/PageHeader';
 import CTASection from '../components/CTASection';
 import Reveal from '../components/Reveal';
 import { COMPANY } from '../lib/company';
+import { getPublishedDestinations } from '../lib/queries';
+import type { Destination } from '../lib/types';
 
 const MAPS_JSONLD = {
   '@context': 'https://schema.org',
@@ -14,66 +17,6 @@ const MAPS_JSONLD = {
   description: 'Interactive maps of Kruger National Park and the surrounding private game reserves in Mpumalanga and Limpopo.',
 };
 
-interface Reserve {
-  name: string;
-  tag: string;
-  size: string;
-  image: string;
-  desc: string;
-}
-
-const RESERVES: Reserve[] = [
-  {
-    name: 'Timbavati Private Nature Reserve',
-    tag: 'Big Five',
-    size: '53 000 ha',
-    image: 'https://images.pexels.com/photos/13142739/pexels-photo-13142739.jpeg?auto=compress&cs=tinysrgb&w=600',
-    desc: 'Famous for rare white lions, Timbavati shares an unfenced border with Kruger giving wildlife total freedom to roam across the ecosystem.',
-  },
-  {
-    name: 'Klaserie Private Nature Reserve',
-    tag: 'Big Five',
-    size: '60 000 ha',
-    image: 'https://images.pexels.com/photos/2739611/pexels-photo-2739611.jpeg?auto=compress&cs=tinysrgb&w=600',
-    desc: 'One of the largest private reserves in South Africa, Klaserie offers an exclusive and authentic African bush experience with excellent predator sightings.',
-  },
-  {
-    name: 'Sabi Sands Game Reserve (North)',
-    tag: 'Luxury',
-    size: 'Part of 65 000 ha',
-    image: 'https://images.pexels.com/photos/133394/pexels-photo-133394.jpeg?auto=compress&cs=tinysrgb&w=600',
-    desc: 'Home to some of the world\'s most celebrated game lodges, Sabi Sands North is known for reliable leopard sightings and world-class guiding.',
-  },
-  {
-    name: 'Sabi Sands Game Reserve (South)',
-    tag: 'Luxury',
-    size: 'Part of 65 000 ha',
-    image: 'https://images.pexels.com/photos/36168137/pexels-photo-36168137.jpeg?auto=compress&cs=tinysrgb&w=600',
-    desc: 'The southern sector of Sabi Sands borders the Sabie River and delivers extraordinary lion and leopard encounters in magnificent riverine bush.',
-  },
-  {
-    name: 'Manyeleti Game Reserve',
-    tag: 'Hidden Gem',
-    size: '23 000 ha',
-    image: 'https://images.pexels.com/photos/3669639/pexels-photo-3669639.jpeg?auto=compress&cs=tinysrgb&w=600',
-    desc: 'A quieter, more affordable alternative that adjoins Kruger and Sabi Sands — Manyeleti offers intimate Big Five game drives without the crowds.',
-  },
-  {
-    name: 'Thornybush Game Reserve',
-    tag: 'Big Five',
-    size: '14 000 ha',
-    image: 'https://images.pexels.com/photos/2133935/pexels-photo-2133935.jpeg?auto=compress&cs=tinysrgb&w=600',
-    desc: 'Nestled between Timbavati and the Blyde River, Thornybush is a malaria-free alternative offering Big Five sightings and luxurious accommodation.',
-  },
-  {
-    name: 'Kapama Private Game Reserve',
-    tag: 'Big Five',
-    size: '13 000 ha',
-    image: 'https://images.pexels.com/photos/20001418/pexels-photo-20001418.jpeg?auto=compress&cs=tinysrgb&w=600',
-    desc: 'Situated near Hoedspruit, Kapama is home to Buffalo Camp and river lodges, offering superb wildlife viewing with the added convenience of KMIA access.',
-  },
-];
-
 const STATS = [
   { label: 'Main Gates', value: '9' },
   { label: 'Total Area', value: '±19 633 km²' },
@@ -82,6 +25,14 @@ const STATS = [
 ];
 
 export default function Maps() {
+  const [destinations, setDestinations] = useState<Destination[] | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    getPublishedDestinations().then((data) => { if (mounted) setDestinations(data); });
+    return () => { mounted = false; };
+  }, []);
+
   return (
     <>
       <Seo
@@ -156,45 +107,61 @@ export default function Maps() {
             </div>
           </Reveal>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {RESERVES.map((reserve) => (
-              <Reveal key={reserve.name}>
-                <article className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
-                  <div className="relative h-48 overflow-hidden">
-                    <img
-                      src={reserve.image}
-                      alt={reserve.name}
-                      loading="lazy"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                    <span className="absolute top-3 right-3 bg-gold text-forest-900 text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full">
-                      {reserve.tag}
-                    </span>
-                  </div>
-                  <div className="p-5 flex-1 flex flex-col">
-                    <div className="flex items-center gap-1.5 text-forest-500 text-xs mb-2">
-                      <TreePine size={12} aria-hidden="true" />
-                      <span>{reserve.size}</span>
+          {destinations === null ? (
+            <div className="flex justify-center py-12" role="status" aria-label="Loading destinations">
+              <Loader2 size={28} className="animate-spin text-forest-400" aria-hidden="true" />
+            </div>
+          ) : destinations.length === 0 ? (
+            <p className="text-center text-forest-500 text-sm">Destination details are coming soon.</p>
+          ) : (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {destinations.map((dest) => (
+                <Reveal key={dest.id}>
+                  <article className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
+                    <div className="relative h-48 overflow-hidden">
+                      {dest.images[0]?.url ? (
+                        <img
+                          src={dest.images[0].url}
+                          alt={dest.images[0].alt || dest.name}
+                          loading="lazy"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-forest-100" aria-hidden="true" />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                      {dest.tag && (
+                        <span className="absolute top-3 right-3 bg-gold text-forest-900 text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full">
+                          {dest.tag}
+                        </span>
+                      )}
                     </div>
-                    <h3 className="font-display text-forest-900 font-semibold text-base mb-2 leading-snug">
-                      {reserve.name}
-                    </h3>
-                    <p className="text-forest-500 text-sm leading-relaxed flex-1">
-                      {reserve.desc}
-                    </p>
-                    <Link
-                      to={`/contact?service=${encodeURIComponent(reserve.name)}`}
-                      className="inline-flex items-center gap-1.5 mt-4 text-forest-700 hover:text-gold text-sm font-medium transition-colors"
-                    >
-                      Enquire about a transfer
-                      <ArrowRight size={14} aria-hidden="true" />
-                    </Link>
-                  </div>
-                </article>
-              </Reveal>
-            ))}
-          </div>
+                    <div className="p-5 flex-1 flex flex-col">
+                      {dest.stat_value && (
+                        <div className="flex items-center gap-1.5 text-forest-500 text-xs mb-2">
+                          <TreePine size={12} aria-hidden="true" />
+                          <span>{dest.stat_label ? `${dest.stat_label}: ` : ''}{dest.stat_value}</span>
+                        </div>
+                      )}
+                      <h3 className="font-display text-forest-900 font-semibold text-base mb-2 leading-snug">
+                        {dest.name}
+                      </h3>
+                      <p className="text-forest-500 text-sm leading-relaxed flex-1">
+                        {dest.description}
+                      </p>
+                      <Link
+                        to={`/contact?service=${encodeURIComponent(dest.name)}`}
+                        className="inline-flex items-center gap-1.5 mt-4 text-forest-700 hover:text-gold text-sm font-medium transition-colors"
+                      >
+                        Enquire about a transfer
+                        <ArrowRight size={14} aria-hidden="true" />
+                      </Link>
+                    </div>
+                  </article>
+                </Reveal>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

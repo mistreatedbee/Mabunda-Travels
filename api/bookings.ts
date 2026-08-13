@@ -67,6 +67,7 @@ export default async function handler(req: any, res: any) {
   const phone = cleanString(body.phone, 20);
   const message = cleanString(body.message, 2000);
   const destination = cleanString(body.destination, 120);
+  const service = cleanString(body.service, 120);
 
   if (!full_name || full_name.length < 2) {
     return res.status(400).json({ error: 'Please provide your full name.' });
@@ -103,6 +104,7 @@ export default async function handler(req: any, res: any) {
     num_travellers,
     destination,
     message,
+    service,
   });
 
   if (error) {

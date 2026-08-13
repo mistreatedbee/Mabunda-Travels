@@ -3,6 +3,7 @@ import Hero from '../components/Hero';
 import TrustedBy from '../components/TrustedBy';
 import DealsSection from '../components/DealsSection';
 import LodgesSection from '../components/LodgesSection';
+import Testimonials from '../components/Testimonials';
 import FAQ from '../components/FAQ';
 import CTASection from '../components/CTASection';
 import { COMPANY } from '../lib/company';
@@ -41,6 +42,7 @@ export default function Home() {
       <TrustedBy />
       <DealsSection />
       <LodgesSection />
+      <Testimonials />
       <FAQ />
       <CTASection />
     </>

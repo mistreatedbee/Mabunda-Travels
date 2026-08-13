@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { MessageCircle, X } from 'lucide-react';
-import { COMPANY } from '../lib/company';
+import { useSettings } from '../lib/SettingsContext';
 
 export default function WhatsAppButton() {
+  const { whatsappLink } = useSettings();
   const [visible, setVisible] = useState(false);
   const [showLabel, setShowLabel] = useState(false);
 
@@ -37,7 +38,7 @@ export default function WhatsAppButton() {
         </div>
       )}
       <a
-        href={COMPANY.whatsappUrl}
+        href={whatsappLink("Hello Mabunda Travel & Tours, I'd like to enquire about a trip.")}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat on WhatsApp"

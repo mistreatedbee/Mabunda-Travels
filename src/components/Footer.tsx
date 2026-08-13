@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
-import { Mail, MapPin, Compass, MessageCircle } from 'lucide-react';
+import { Mail, MapPin, Compass, MessageCircle, Star, Lock } from 'lucide-react';
 import { COMPANY } from '../lib/company';
 import { SERVICES } from '../lib/data';
+import { useSettings } from '../lib/SettingsContext';
 
 const NAV_LINKS = [
   { label: 'Home',     to: '/' },
@@ -18,6 +19,7 @@ const LEGAL_LINKS = [
 ];
 
 export default function Footer() {
+  const { email, address, whatsappLink, tripadvisorReviewUrl } = useSettings();
   return (
     <footer className="bg-forest-900 text-white pt-16 pb-8 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" aria-hidden="true" />
@@ -92,14 +94,14 @@ export default function Footer() {
             <h2 className="font-display text-base font-semibold mb-5 text-gold">Contact Us</h2>
             <ul className="space-y-4">
               <li>
-                <a href={`mailto:${COMPANY.email}`} className="flex items-start gap-3 text-white/60 hover:text-gold transition-colors text-sm break-all">
+                <a href={`mailto:${email}`} className="flex items-start gap-3 text-white/60 hover:text-gold transition-colors text-sm break-all">
                   <Mail size={16} className="mt-0.5 flex-shrink-0 text-olive" aria-hidden="true" />
-                  {COMPANY.email}
+                  {email}
                 </a>
               </li>
               <li>
                 <a
-                  href={COMPANY.whatsappUrl}
+                  href={whatsappLink("Hello Mabunda Travel & Tours, I'd like to enquire about a trip.")}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 text-white/60 hover:text-gold transition-colors text-sm"
@@ -111,9 +113,22 @@ export default function Footer() {
               <li>
                 <div className="flex items-start gap-3 text-white/60 text-sm">
                   <MapPin size={16} className="mt-0.5 flex-shrink-0 text-olive" aria-hidden="true" />
-                  {COMPANY.address}
+                  {address}
                 </div>
               </li>
+              {tripadvisorReviewUrl && (
+                <li>
+                  <a
+                    href={tripadvisorReviewUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 text-white/60 hover:text-gold transition-colors text-sm"
+                  >
+                    <Star size={16} className="flex-shrink-0 text-olive" aria-hidden="true" />
+                    Leave us a Review
+                  </a>
+                </li>
+              )}
             </ul>
           </div>
         </div>
@@ -125,6 +140,15 @@ export default function Footer() {
           <p className="text-white/40 text-xs">
             Designed with care for travellers seeking authentic African experiences.
           </p>
+          {/* Discreet staff-only entry point — not part of the main nav, not indexed (robots.txt), low-contrast so casual visitors won't notice it. */}
+          <Link
+            to="/admin/login"
+            className="text-white/15 hover:text-white/50 transition-colors flex-shrink-0"
+            aria-label="Staff login"
+            title="Staff login"
+          >
+            <Lock size={13} aria-hidden="true" />
+          </Link>
         </div>
       </div>
     </footer>

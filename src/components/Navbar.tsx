@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Menu, X, Mail } from 'lucide-react';
-import { COMPANY } from '../lib/company';
+import { useSettings } from '../lib/SettingsContext';
 
 const NAV_LINKS = [
   { label: 'Home',     to: '/' },
@@ -13,6 +13,7 @@ const NAV_LINKS = [
 ];
 
 export default function Navbar() {
+  const { email } = useSettings();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
@@ -79,11 +80,11 @@ export default function Navbar() {
 
         <div className="hidden lg:flex items-center gap-4">
           <a
-            href={`mailto:${COMPANY.email}`}
+            href={`mailto:${email}`}
             className={`flex items-center gap-2 text-sm transition-colors ${scrolled ? 'text-forest-700 hover:text-gold' : 'text-white/80 hover:text-gold'}`}
           >
             <Mail size={15} aria-hidden="true" />
-            <span className="hidden xl:inline">{COMPANY.email}</span>
+            <span className="hidden xl:inline">{email}</span>
             <span className="xl:hidden">Email us</span>
           </a>
           <Link
@@ -128,10 +129,10 @@ export default function Navbar() {
           </ul>
           <div className="mt-3 pt-3 border-t border-gray-100 space-y-2">
             <a
-              href={`mailto:${COMPANY.email}`}
+              href={`mailto:${email}`}
               className="block py-2.5 px-4 text-forest-600 hover:text-gold text-sm transition-colors truncate"
             >
-              {COMPANY.email}
+              {email}
             </a>
             <Link
               to="/contact"

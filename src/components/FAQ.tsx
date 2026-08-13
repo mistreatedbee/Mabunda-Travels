@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Minus, Target, Eye, Heart, ArrowRight } from 'lucide-react';
-import { FAQS, KRUGER_GATES, type Faq } from '../lib/data';
+import { Plus, Minus, Target, Eye, Heart, ArrowRight, Loader2 } from 'lucide-react';
+import { KRUGER_GATES } from '../lib/data';
+import { getPublishedFaqs } from '../lib/queries';
+import type { Faq } from '../lib/types';
 
 interface FAQProps {
-  items?: Faq[];
+  /** Which FAQ category to show — omit for all published FAQs. */
+  category?: Faq['category'];
   showAbout?: boolean;
 }
 
@@ -110,14 +113,25 @@ function KrugerGateTimes() {
   );
 }
 
-export default function FAQ({ items = FAQS, showAbout = true }: FAQProps) {
+export default function FAQ({ category, showAbout = true }: FAQProps) {
   const [open, setOpen] = useState<number | null>(0);
+  const [items, setItems] = useState<Faq[] | null>(null);
 
-  const accordion = (
+  useEffect(() => {
+    let mounted = true;
+    getPublishedFaqs(category).then((data) => { if (mounted) setItems(data); });
+    return () => { mounted = false; };
+  }, [category]);
+
+  const accordion = items === null ? (
+    <div className="flex justify-center py-10" role="status" aria-label="Loading FAQs">
+      <Loader2 size={24} className="animate-spin text-forest-400" aria-hidden="true" />
+    </div>
+  ) : items.length === 0 ? null : (
     <div className="space-y-3">
       {items.map((faq, i) => (
         <div
-          key={faq.q}
+          key={faq.id}
           className={`bg-white rounded-2xl border transition-all duration-300 ${
             open === i ? 'border-forest-200 shadow-md' : 'border-gray-100'
           }`}
@@ -130,7 +144,7 @@ export default function FAQ({ items = FAQS, showAbout = true }: FAQProps) {
               aria-controls={`faq-panel-${i}`}
               id={`faq-button-${i}`}
             >
-              <span className="font-medium text-forest-900 text-sm sm:text-base">{faq.q}</span>
+              <span className="font-medium text-forest-900 text-sm sm:text-base">{faq.question}</span>
               <span
                 className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ml-3 transition-colors ${
                   open === i ? 'bg-gold text-forest-900' : 'bg-forest-50 text-forest-700'
@@ -148,7 +162,7 @@ export default function FAQ({ items = FAQS, showAbout = true }: FAQProps) {
             className={`overflow-hidden transition-all duration-300 ${open === i ? 'max-h-56' : 'max-h-0'}`}
           >
             <p className="px-5 pb-5 text-sm text-forest-600/70 leading-relaxed">
-              {faq.a}
+              {faq.answer}
             </p>
           </div>
         </div>

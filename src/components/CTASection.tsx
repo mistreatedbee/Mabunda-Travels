@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, MessageCircle } from 'lucide-react';
-import { COMPANY } from '../lib/company';
+import { useSettings } from '../lib/SettingsContext';
 import Reveal from './Reveal';
 
 interface CTASectionProps {
@@ -13,6 +13,7 @@ export default function CTASection({
   title = 'Ready to start your journey?',
   text = 'Tell us where you dream of going and we will craft a personalised itinerary with an obligation-free quote — usually within one business day.',
 }: CTASectionProps) {
+  const { whatsappLink } = useSettings();
   return (
     <section className="py-20 sm:py-24 bg-forest-900 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" aria-hidden="true" />
@@ -34,7 +35,7 @@ export default function CTASection({
               <ArrowRight size={18} />
             </Link>
             <a
-              href={COMPANY.whatsappUrl}
+              href={whatsappLink("Hello Mabunda Travel & Tours, I'd like to enquire about a trip.")}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 border border-white/30 hover:border-gold text-white hover:text-gold font-semibold px-7 py-3.5 rounded-full transition-colors"

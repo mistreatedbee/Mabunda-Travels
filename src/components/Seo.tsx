@@ -1,11 +1,15 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { COMPANY } from '../lib/company';
+import { supabase } from '../lib/supabase';
+import type { SeoPageOverride } from '../lib/types';
 
 interface SeoProps {
   title: string;
   description: string;
   /** Route path beginning with '/', used for the canonical URL. */
   path: string;
+  /** Optional social sharing image. */
+  ogImage?: string;
   /** Optional JSON-LD structured data for this page. */
   jsonLd?: object;
   /** Set true on pages that should not be indexed (e.g. booking success). */
@@ -22,21 +26,52 @@ function setMeta(attr: 'name' | 'property', key: string, content: string) {
   el.setAttribute('content', content);
 }
 
+function removeMeta(attr: 'name' | 'property', key: string) {
+  document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`)?.remove();
+}
+
 /**
  * Manages the document head for each page: title, description, canonical
  * URL, Open Graph tags, robots directives and JSON-LD structured data.
+ *
+ * Every value here is a sensible hardcoded default. If an admin has set a
+ * per-page override in the SEO Manager (`/admin/seo`, `seo_pages` table),
+ * that override wins — otherwise these defaults render exactly as before.
  */
-export default function Seo({ title, description, path, jsonLd, noindex = false }: SeoProps) {
+export default function Seo({ title, description, path, ogImage, jsonLd, noindex = false }: SeoProps) {
+  const [override, setOverride] = useState<SeoPageOverride | null>(null);
   const jsonLdString = jsonLd ? JSON.stringify(jsonLd) : null;
 
   useEffect(() => {
-    const url = `${COMPANY.siteUrl}${path === '/' ? '' : path}`;
-    document.title = title;
-    setMeta('name', 'description', description);
-    setMeta('property', 'og:title', title);
-    setMeta('property', 'og:description', description);
+    let mounted = true;
+    setOverride(null);
+    supabase.from('seo_pages').select('*').eq('path', path).maybeSingle().then(({ data }) => {
+      if (mounted) setOverride((data as SeoPageOverride) ?? null);
+    });
+    return () => { mounted = false; };
+  }, [path]);
+
+  const effectiveTitle = override?.title || title;
+  const effectiveDescription = override?.description || description;
+  const effectiveOgTitle = override?.og_title || effectiveTitle;
+  const effectiveOgDescription = override?.og_description || effectiveDescription;
+  const effectiveOgImage = override?.og_image_url || ogImage;
+  const effectiveNoindex = override ? !override.robots_index : noindex;
+
+  useEffect(() => {
+    const url = override?.canonical_url || `${COMPANY.siteUrl}${path === '/' ? '' : path}`;
+    document.title = effectiveTitle;
+    setMeta('name', 'description', effectiveDescription);
+    setMeta('property', 'og:title', effectiveOgTitle);
+    setMeta('property', 'og:description', effectiveOgDescription);
     setMeta('property', 'og:url', url);
-    setMeta('name', 'robots', noindex ? 'noindex, nofollow' : 'index, follow');
+    setMeta('name', 'robots', effectiveNoindex ? 'noindex, nofollow' : 'index, follow');
+
+    if (effectiveOgImage) {
+      setMeta('property', 'og:image', effectiveOgImage);
+    } else {
+      removeMeta('property', 'og:image');
+    }
 
     let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
     if (!canonical) {
@@ -58,7 +93,7 @@ export default function Seo({ title, description, path, jsonLd, noindex = false 
     } else if (script) {
       script.remove();
     }
-  }, [title, description, path, jsonLdString, noindex]);
+  }, [effectiveTitle, effectiveDescription, effectiveOgTitle, effectiveOgDescription, effectiveOgImage, effectiveNoindex, path, jsonLdString, override?.canonical_url]);
 
   return null;
 }

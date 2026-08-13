@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, ArrowRight, Smartphone } from 'lucide-react';
-import { ACTIVITIES, type Activity } from '../lib/data';
+import { MapPin, ArrowRight, Smartphone, Loader2 } from 'lucide-react';
+import { getPublishedTours } from '../lib/queries';
+import type { Tour } from '../lib/types';
 import Reveal from './Reveal';
 
-function ActivityCard({ activity }: { activity: Activity }) {
+function ActivityCard({ tour }: { tour: Tour }) {
   const [flipped, setFlipped] = useState(false);
+  const image = tour.images[0]?.url;
 
   return (
     <Reveal>
@@ -14,7 +16,7 @@ function ActivityCard({ activity }: { activity: Activity }) {
         onClick={() => setFlipped((f) => !f)}
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setFlipped((f) => !f); }}
         tabIndex={0}
-        aria-label={`${activity.title} — tap to learn more`}
+        aria-label={`${tour.name} — tap to learn more`}
         role="button"
         aria-pressed={flipped}
       >
@@ -22,29 +24,37 @@ function ActivityCard({ activity }: { activity: Activity }) {
 
           {/* Front face */}
           <div className="activity-card-face activity-card-front rounded-2xl">
-            <img
-              src={activity.image}
-              alt={activity.title}
-              className="w-full h-full object-cover"
-              loading="lazy"
-              width="400"
-              height="320"
-            />
+            {image ? (
+              <img
+                src={image}
+                alt={tour.images[0]?.alt || tour.name}
+                className="w-full h-full object-cover"
+                loading="lazy"
+                width="400"
+                height="320"
+              />
+            ) : (
+              <div className="w-full h-full bg-forest-100" aria-hidden="true" />
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-            <span className="absolute top-4 right-4 bg-gold text-forest-900 text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full">
-              {activity.tag}
-            </span>
+            {tour.tag && (
+              <span className="absolute top-4 right-4 bg-gold text-forest-900 text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full">
+                {tour.tag}
+              </span>
+            )}
 
             <div className="absolute bottom-0 left-0 right-0 p-5">
-              <div className="flex items-center gap-1.5 text-white/70 text-xs mb-1.5">
-                <MapPin size={12} aria-hidden="true" />
-                <span>{activity.location}</span>
-              </div>
+              {tour.destination?.name && (
+                <div className="flex items-center gap-1.5 text-white/70 text-xs mb-1.5">
+                  <MapPin size={12} aria-hidden="true" />
+                  <span>{tour.destination.name}</span>
+                </div>
+              )}
               <h3 className="font-display text-white font-semibold text-lg leading-snug mb-2">
-                {activity.title}
+                {tour.name}
               </h3>
-              <p className="text-white/75 text-xs line-clamp-2">{activity.desc}</p>
+              <p className="text-white/75 text-xs line-clamp-2">{tour.short_description}</p>
 
               <span className="hidden sm:flex items-center gap-1.5 mt-3 text-gold text-[10px] font-semibold uppercase tracking-wide">
                 Hover to explore
@@ -60,20 +70,24 @@ function ActivityCard({ activity }: { activity: Activity }) {
           {/* Back face */}
           <div className="activity-card-face activity-card-back rounded-2xl bg-forest-900 p-6 flex flex-col justify-between">
             <div>
-              <span className="inline-block bg-gold/20 text-gold text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full mb-3">
-                {activity.tag}
-              </span>
+              {tour.tag && (
+                <span className="inline-block bg-gold/20 text-gold text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full mb-3">
+                  {tour.tag}
+                </span>
+              )}
               <h3 className="font-display text-white font-bold text-lg leading-snug mb-3">
-                {activity.title}
+                {tour.name}
               </h3>
               <p className="text-white/75 text-sm leading-relaxed line-clamp-5">
-                {activity.longDesc}
+                {tour.full_description || tour.short_description}
               </p>
             </div>
-            <div className="flex items-center gap-2 mt-4">
-              <MapPin size={13} className="text-gold flex-shrink-0" aria-hidden="true" />
-              <span className="text-white/60 text-xs">{activity.location}</span>
-            </div>
+            {tour.destination?.name && (
+              <div className="flex items-center gap-2 mt-4">
+                <MapPin size={13} className="text-gold flex-shrink-0" aria-hidden="true" />
+                <span className="text-white/60 text-xs">{tour.destination.name}</span>
+              </div>
+            )}
           </div>
 
         </div>
@@ -83,6 +97,18 @@ function ActivityCard({ activity }: { activity: Activity }) {
 }
 
 export default function DealsSection() {
+  const [tours, setTours] = useState<Tour[] | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    getPublishedTours().then((data) => { if (mounted) setTours(data); });
+    return () => { mounted = false; };
+  }, []);
+
+  // While loading, or if there's genuinely nothing published yet, render
+  // nothing rather than a placeholder — no fabricated content.
+  if (tours !== null && tours.length === 0) return null;
+
   return (
     <section id="experiences" aria-label="Experiences and activities" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
@@ -101,11 +127,17 @@ export default function DealsSection() {
           </div>
         </Reveal>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {ACTIVITIES.map((activity) => (
-            <ActivityCard key={activity.slug} activity={activity} />
-          ))}
-        </div>
+        {tours === null ? (
+          <div className="flex justify-center py-12" role="status" aria-label="Loading tours">
+            <Loader2 size={28} className="animate-spin text-forest-400" aria-hidden="true" />
+          </div>
+        ) : (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {tours.map((tour) => (
+              <ActivityCard key={tour.id} tour={tour} />
+            ))}
+          </div>
+        )}
 
         <Reveal>
           <div className="text-center mt-12">

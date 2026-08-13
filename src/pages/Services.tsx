@@ -1,10 +1,13 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Check, MessageSquareText, FileText, Plane } from 'lucide-react';
+import { Check, MessageSquareText, FileText, Plane, Car, Users2, Loader2 } from 'lucide-react';
 import Seo from '../components/Seo';
 import PageHeader from '../components/PageHeader';
 import CTASection from '../components/CTASection';
 import Reveal from '../components/Reveal';
 import { SERVICES } from '../lib/data';
+import { getPublishedTransfers } from '../lib/queries';
+import type { Transfer } from '../lib/types';
 
 const STEPS = [
   {
@@ -25,6 +28,14 @@ const STEPS = [
 ];
 
 export default function Services() {
+  const [transfers, setTransfers] = useState<Transfer[] | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    getPublishedTransfers().then((data) => { if (mounted) setTransfers(data); });
+    return () => { mounted = false; };
+  }, []);
+
   return (
     <>
       <Seo
@@ -77,6 +88,62 @@ export default function Services() {
           ))}
         </div>
       </section>
+
+      {/* Transfers */}
+      {(transfers === null || transfers.length > 0) && (
+        <section className="py-20 sm:py-24 bg-white" aria-label="Our transfers">
+          <div className="max-w-7xl mx-auto px-5 sm:px-8">
+            <Reveal>
+              <div className="text-center max-w-2xl mx-auto mb-12">
+                <span className="text-gold font-semibold text-sm tracking-[0.2em] uppercase">Transfers</span>
+                <h2 className="font-display text-3xl sm:text-4xl text-forest-900 font-bold mt-2 leading-tight">
+                  Reliable transfers, door to door
+                </h2>
+                <p className="text-forest-600/70 text-sm mt-3">
+                  Airport, private and custom transfers across Mpumalanga — always your own vehicle, never a shared shuttle.
+                </p>
+              </div>
+            </Reveal>
+
+            {transfers === null ? (
+              <div className="flex justify-center py-8" role="status" aria-label="Loading transfers">
+                <Loader2 size={24} className="animate-spin text-forest-400" aria-hidden="true" />
+              </div>
+            ) : (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {transfers.map((t) => (
+                  <Reveal key={t.id}>
+                    <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100 h-full flex flex-col">
+                      <div className="w-11 h-11 rounded-xl bg-forest-800 flex items-center justify-center mb-4">
+                        <Car className="text-white" size={20} aria-hidden="true" />
+                      </div>
+                      <h3 className="font-display text-forest-900 font-semibold text-base mb-2">{t.name}</h3>
+                      <p className="text-forest-500 text-sm leading-relaxed flex-1 mb-4">{t.description}</p>
+                      {t.passenger_capacity && (
+                        <div className="flex items-center gap-1.5 text-xs text-forest-400 mb-3">
+                          <Users2 size={13} aria-hidden="true" />
+                          Up to {t.passenger_capacity} passengers
+                        </div>
+                      )}
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold text-forest-800">
+                          {t.pricing_type === 'fixed' && t.price ? `From R${t.price}` : 'Request a Quote'}
+                        </span>
+                        <Link
+                          to={`/contact?service=${encodeURIComponent(t.name)}`}
+                          className="text-forest-700 hover:text-gold text-sm font-medium transition-colors"
+                        >
+                          Enquire →
+                        </Link>
+                      </div>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* How it works */}
       <section className="py-20 sm:py-24 bg-gray-50">

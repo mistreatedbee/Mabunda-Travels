@@ -37,14 +37,14 @@ export default function Hero() {
       {/* Content */}
       <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-8 text-center pt-32 pb-24">
 
-        {/* Logo */}
-        <div className="mx-auto mb-6 w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden border-2 border-white/40 shadow-2xl ring-4 ring-white/10 animate-fade-in">
+        {/* Logo — shown in full (not cropped into a circle) so the emblem and wordmark both stay legible */}
+        <div className="mx-auto mb-6 w-36 sm:w-44 bg-white rounded-3xl shadow-2xl ring-4 ring-white/10 p-2.5 animate-fade-in">
           <img
             src="/logo.jpeg"
             alt="Mabunda Travel & Tours logo"
-            width="128"
-            height="128"
-            className="w-full h-full object-cover"
+            width="746"
+            height="741"
+            className="w-full h-auto rounded-2xl"
           />
         </div>
 

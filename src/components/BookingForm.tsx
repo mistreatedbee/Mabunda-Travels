@@ -10,6 +10,8 @@ interface BookingFields {
   travel_date: string;
   num_travellers: string;
   message: string;
+  /** Structured service/package name, passed through from the linking page's query param — not user-editable. */
+  service: string;
   /** Honeypot — real users never see or fill this field. */
   website: string;
 }
@@ -30,6 +32,9 @@ function initialValues(params: URLSearchParams): Partial<BookingFields> {
 
   const service = params.get('service');
   if (service) messageParts.push(`I'm interested in your ${service} service.`);
+
+  const structuredService = pkg || service;
+  if (structuredService) values.service = structuredService;
 
   const date = params.get('date');
   if (date && /^\d{4}-\d{2}-\d{2}$/.test(date)) values.travel_date = date;
@@ -58,6 +63,7 @@ export default function BookingForm() {
       travel_date: '',
       num_travellers: '',
       message: '',
+      service: '',
       website: '',
       ...initialValues(searchParams),
     },
@@ -75,6 +81,7 @@ export default function BookingForm() {
       travel_date: data.travel_date || null,
       num_travellers: data.num_travellers ? parseInt(data.num_travellers, 10) : null,
       message: data.message.trim() || null,
+      service: data.service || null,
       website: data.website,
     };
 
@@ -107,6 +114,9 @@ export default function BookingForm() {
         <label htmlFor="website">Leave this field empty</label>
         <input id="website" type="text" tabIndex={-1} autoComplete="off" {...register('website')} />
       </div>
+
+      {/* Structured service/package name, pre-filled from the linking page's query param */}
+      <input type="hidden" {...register('service')} />
 
       <div className="grid sm:grid-cols-2 gap-5">
         <div>
