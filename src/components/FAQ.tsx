@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Minus, Target, Eye, Heart, ArrowRight, Loader2 } from 'lucide-react';
-import { KRUGER_GATES } from '../lib/data';
+import { KRUGER_GATE_MONTHS, KRUGER_MONTHLY_GATES } from '../lib/data';
 import { getPublishedFaqs } from '../lib/queries';
 import type { Faq } from '../lib/types';
+import FaqAnswer from './FaqAnswer';
 
 interface FAQProps {
   /** Which FAQ category to show — omit for all published FAQs. */
@@ -15,99 +16,62 @@ function KrugerGateTimes() {
   return (
     <div className="mt-10">
       <h3 className="font-display text-xl font-bold text-forest-900 mb-2">
-        Kruger National Park — Gate Opening Times
+        Kruger National Park — Gate Times
       </h3>
       <p className="text-sm text-forest-600/70 mb-4">
-        All times are approximate. Always confirm with SANParks before your visit as times may change seasonally.
+        You must be inside your camp or out of the gate before closing time. Late arrival may result in a fine. Always confirm with SANParks before your visit.
       </p>
 
-      {/* Desktop table */}
-      <div className="hidden sm:block overflow-x-auto rounded-2xl border border-forest-100 shadow-sm">
-        <table className="w-full text-sm">
+      {/* Desktop monthly table */}
+      <div className="hidden md:block overflow-x-auto rounded-2xl border border-forest-100 shadow-sm">
+        <table className="w-full text-xs sm:text-sm">
           <thead>
             <tr className="bg-forest-800 text-white">
-              <th className="text-left px-4 py-3 font-semibold rounded-tl-2xl">Gate</th>
-              <th className="text-left px-4 py-3 font-semibold">Location</th>
-              <th className="text-left px-4 py-3 font-semibold">Opens</th>
-              <th className="text-left px-4 py-3 font-semibold">
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-amber-400" aria-hidden="true" />
-                  Summer Close
-                </span>
+              <th className="text-left px-3 py-3 font-semibold rounded-tl-2xl sticky left-0 bg-forest-800 min-w-[140px]">
+                Gate Times
               </th>
-              <th className="text-left px-4 py-3 font-semibold rounded-tr-2xl">
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-blue-400" aria-hidden="true" />
-                  Winter Close
-                </span>
-              </th>
+              {KRUGER_GATE_MONTHS.map((month) => (
+                <th key={month} className="px-2 py-3 font-semibold text-center min-w-[52px]">
+                  {month}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
-            {KRUGER_GATES.map((gate, i) => (
+            {KRUGER_MONTHLY_GATES.map((row, i) => (
               <tr
-                key={gate.name}
+                key={row.label}
                 className={`border-t border-forest-50 ${i % 2 === 0 ? 'bg-white' : 'bg-forest-50/50'}`}
               >
-                <td className="px-4 py-3 font-medium text-forest-900">
-                  {gate.name}
-                  {gate.note && (
-                    <span className="block text-[11px] text-forest-500 font-normal mt-0.5">{gate.note}</span>
-                  )}
+                <td className="px-3 py-3 font-medium text-forest-900 sticky left-0 bg-inherit">
+                  {row.label}
                 </td>
-                <td className="px-4 py-3 text-forest-600">{gate.location}</td>
-                <td className="px-4 py-3 text-forest-700 font-medium">{gate.opens}</td>
-                <td className="px-4 py-3">
-                  <span className="bg-amber-50 text-amber-800 px-2 py-0.5 rounded-full text-xs font-semibold">
-                    {gate.closeSummer}
-                  </span>
-                </td>
-                <td className="px-4 py-3">
-                  <span className="bg-blue-50 text-blue-800 px-2 py-0.5 rounded-full text-xs font-semibold">
-                    {gate.closeWinter}
-                  </span>
-                </td>
+                {row.times.map((time, j) => (
+                  <td key={j} className="px-2 py-3 text-center text-forest-700 font-medium">
+                    {time}
+                  </td>
+                ))}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      {/* Mobile cards */}
-      <div className="sm:hidden space-y-3">
-        {KRUGER_GATES.map((gate) => (
-          <div key={gate.name} className="bg-white rounded-2xl border border-forest-100 p-4 shadow-sm">
-            <div className="flex items-start justify-between mb-2">
-              <div>
-                <p className="font-semibold text-forest-900 text-sm">{gate.name}</p>
-                <p className="text-forest-500 text-xs">{gate.location}</p>
-                {gate.note && <p className="text-forest-400 text-[11px] mt-0.5">{gate.note}</p>}
-              </div>
-              <span className="text-forest-700 text-xs font-medium bg-forest-50 px-2 py-1 rounded-full">
-                Opens {gate.opens}
-              </span>
-            </div>
-            <div className="flex gap-2 mt-2">
-              <span className="bg-amber-50 text-amber-800 px-2.5 py-1 rounded-full text-xs font-semibold">
-                ☀ Summer closes {gate.closeSummer}
-              </span>
-              <span className="bg-blue-50 text-blue-800 px-2.5 py-1 rounded-full text-xs font-semibold">
-                ❄ Winter closes {gate.closeWinter}
-              </span>
+      {/* Mobile — stacked by row */}
+      <div className="md:hidden space-y-4">
+        {KRUGER_MONTHLY_GATES.map((row) => (
+          <div key={row.label} className="bg-white rounded-2xl border border-forest-100 p-4 shadow-sm">
+            <p className="font-semibold text-forest-900 text-sm mb-3">{row.label}</p>
+            <div className="grid grid-cols-4 gap-2">
+              {KRUGER_GATE_MONTHS.map((month, i) => (
+                <div key={month} className="text-center">
+                  <div className="text-[10px] text-forest-500 uppercase">{month}</div>
+                  <div className="text-xs font-semibold text-forest-800">{row.times[i]}</div>
+                </div>
+              ))}
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="mt-4 flex flex-wrap gap-4 text-xs text-forest-500">
-        <span className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-amber-400" aria-hidden="true" />
-          Summer: October – March
-        </span>
-        <span className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-blue-400" aria-hidden="true" />
-          Winter: April – September
-        </span>
       </div>
     </div>
   );
@@ -159,11 +123,9 @@ export default function FAQ({ category, showAbout = true }: FAQProps) {
             id={`faq-panel-${i}`}
             role="region"
             aria-labelledby={`faq-button-${i}`}
-            className={`overflow-hidden transition-all duration-300 ${open === i ? 'max-h-56' : 'max-h-0'}`}
+            className={`overflow-hidden transition-all duration-300 ${open === i ? 'max-h-[600px]' : 'max-h-0'}`}
           >
-            <p className="px-5 pb-5 text-sm text-forest-600/70 leading-relaxed">
-              {faq.answer}
-            </p>
+            <FaqAnswer text={faq.answer} />
           </div>
         </div>
       ))}

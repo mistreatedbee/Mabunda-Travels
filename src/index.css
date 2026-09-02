@@ -98,3 +98,28 @@ textarea:focus-visible {
 
 .animate-fade-in     { animation: fade-in     0.7s ease both; }
 .animate-fade-in-up  { animation: fade-in-up  0.7s ease both; }
+
+/* ── Hero background slideshow (Ken Burns) ────────────────────────────────── */
+
+@keyframes hero-ken-burns {
+  0%   { opacity: 0; transform: scale(1.05); }
+  5%   { opacity: 1; }
+  30%  { opacity: 1; transform: scale(1.12); }
+  35%  { opacity: 0; }
+  100% { opacity: 0; transform: scale(1.12); }
+}
+
+.hero-bg-slide {
+  animation: hero-ken-burns 24s ease-in-out infinite;
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-bg-slide {
+    animation: none;
+    opacity: 0;
+  }
+  .hero-bg-slide:first-child {
+    opacity: 1;
+  }
+}

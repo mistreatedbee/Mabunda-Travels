@@ -2,6 +2,12 @@ import { useState, type FormEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Calendar, Users, ArrowRight, Sparkles } from 'lucide-react';
 
+const HERO_IMAGES = [
+  'https://images.pexels.com/photos/30878973/pexels-photo-30878973.jpeg?auto=compress&cs=tinysrgb&w=1920',
+  'https://images.pexels.com/photos/631317/pexels-photo-631317.jpeg?auto=compress&cs=tinysrgb&w=1920',
+  'https://images.pexels.com/photos/145939/pexels-photo-145939.jpeg?auto=compress&cs=tinysrgb&w=1920',
+];
+
 export default function Hero() {
   const [date, setDate] = useState('');
   const [guests, setGuests] = useState('');
@@ -20,14 +26,19 @@ export default function Hero() {
 
   return (
     <section id="home" className="relative min-h-[100vh] flex items-center justify-center overflow-hidden">
-      {/* Background */}
+      {/* Animated background slideshow */}
       <div className="absolute inset-0 z-0">
-        <img
-          src="https://images.pexels.com/photos/30878973/pexels-photo-30878973.jpeg?auto=compress&cs=tinysrgb&w=1920"
-          alt="African savanna at golden sunset with acacia trees"
-          className="w-full h-full object-cover scale-105"
-          fetchPriority="high"
-        />
+        {HERO_IMAGES.map((src, i) => (
+          <img
+            key={src}
+            src={src}
+            alt=""
+            aria-hidden="true"
+            className="hero-bg-slide absolute inset-0 w-full h-full object-cover"
+            style={{ animationDelay: `${i * 8}s` }}
+            fetchPriority={i === 0 ? 'high' : 'low'}
+          />
+        ))}
         <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/65" />
       </div>
 
@@ -37,14 +48,15 @@ export default function Hero() {
       {/* Content */}
       <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-8 text-center pt-32 pb-24">
 
-        {/* Logo — shown in full (not cropped into a circle) so the emblem and wordmark both stay legible */}
-        <div className="mx-auto mb-6 w-36 sm:w-44 bg-white rounded-3xl shadow-2xl ring-4 ring-white/10 p-2.5 animate-fade-in">
+        {/* Logo — larger, no white rectangle; brand triangle emblem stays visible */}
+        <div className="mx-auto mb-8 w-64 sm:w-80 lg:w-96 animate-fade-in">
           <img
             src="/logo.jpeg"
             alt="Mabunda Travel & Tours logo"
             width="746"
             height="741"
-            className="w-full h-auto rounded-2xl"
+            className="w-full h-auto drop-shadow-2xl"
+            style={{ imageRendering: 'auto' }}
           />
         </div>
 
@@ -70,15 +82,14 @@ export default function Hero() {
           Mabunda Travel &amp; Tours — your trusted travel partner in Mpumalanga.
         </p>
 
-        {/* Search form */}
+        {/* Trip planner — no destination/Where To field */}
         <form
           onSubmit={handleSearch}
-          className="bg-white rounded-2xl shadow-2xl p-2 sm:p-3 max-w-xl mx-auto animate-fade-in-up"
+          className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-2 sm:p-3 max-w-xl mx-auto animate-fade-in-up"
           style={{ animationDelay: '0.24s' }}
           aria-label="Plan your trip"
         >
           <div className="flex flex-col sm:flex-row items-stretch gap-2">
-            {/* Date */}
             <div className="flex-1 flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-forest-50 transition-colors text-left">
               <Calendar size={18} className="text-forest-600 flex-shrink-0" aria-hidden="true" />
               <div className="flex-1 min-w-0">
@@ -96,7 +107,6 @@ export default function Hero() {
 
             <div className="hidden sm:block w-px bg-gray-200 my-2" aria-hidden="true" />
 
-            {/* Guests */}
             <div className="flex-1 flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-forest-50 transition-colors text-left">
               <Users size={18} className="text-forest-600 flex-shrink-0" aria-hidden="true" />
               <div className="flex-1 min-w-0">

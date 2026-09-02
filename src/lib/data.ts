@@ -72,6 +72,30 @@ export interface KrugerGateTime {
   note?: string;
 }
 
+/** Monthly gate times — matches SANParks / industry standard format. */
+export const KRUGER_GATE_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] as const;
+
+export interface KrugerMonthlyGateRow {
+  label: string;
+  times: readonly string[];
+  note?: string;
+}
+
+export const KRUGER_MONTHLY_GATES: KrugerMonthlyGateRow[] = [
+  {
+    label: 'Entrance Gates Open',
+    times: ['05:30', '05:30', '05:30', '06:00', '06:00', '06:00', '06:00', '06:00', '06:00', '05:30', '05:30', '05:30'],
+  },
+  {
+    label: 'Camp Gates Open',
+    times: ['04:30', '05:30', '05:30', '06:00', '06:00', '06:00', '06:00', '06:00', '06:00', '05:30', '04:30', '04:30'],
+  },
+  {
+    label: 'All Gates Close',
+    times: ['18:30', '18:30', '18:30', '18:30', '17:30', '17:30', '17:30', '17:30', '18:00', '18:00', '18:30', '18:30'],
+  },
+];
+
 export const KRUGER_GATES: KrugerGateTime[] = [
   { name: 'Paul Kruger Gate',       location: 'Central',        opens: '05:30', closeSummer: '18:30', closeWinter: '17:30' },
   { name: 'Numbi Gate',             location: 'South-West',     opens: '05:30', closeSummer: '18:30', closeWinter: '17:30' },

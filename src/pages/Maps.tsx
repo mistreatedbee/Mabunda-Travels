@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, ArrowRight, TreePine, Loader2 } from 'lucide-react';
+import { MapPin, ArrowRight, TreePine, Loader2, ZoomIn } from 'lucide-react';
 import Seo from '../components/Seo';
 import PageHeader from '../components/PageHeader';
 import CTASection from '../components/CTASection';
@@ -14,7 +14,7 @@ const MAPS_JSONLD = {
   '@type': 'WebPage',
   name: 'Safari Maps — Kruger & Private Reserves | Mabunda Travel & Tours',
   url: `${COMPANY.siteUrl}/maps`,
-  description: 'Interactive maps of Kruger National Park and the surrounding private game reserves in Mpumalanga and Limpopo.',
+  description: 'Maps of Kruger National Park and the surrounding private game reserves in Mpumalanga and Limpopo.',
 };
 
 const STATS = [
@@ -23,6 +23,63 @@ const STATS = [
   { label: 'Animal Species', value: '147+' },
   { label: 'Private Reserves', value: '20+' },
 ];
+
+const RESERVE_NAMES = [
+  'Timbavati', 'Klaserie', 'Sabi Sand North', 'Sabi Sand South',
+  'Manyeleti', 'Thornybush', 'Kapama', 'Balule', 'Umbabat',
+];
+
+function MapImage({ src, alt, caption }: { src: string; alt: string; caption: string }) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <figure className="group">
+      <button
+        type="button"
+        onClick={() => setExpanded(true)}
+        className="relative block w-full rounded-3xl overflow-hidden shadow-xl border border-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+        aria-label={`View full size: ${alt}`}
+      >
+        <img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          className="w-full h-auto object-contain bg-forest-50"
+        />
+        <span className="absolute bottom-4 right-4 flex items-center gap-1.5 bg-black/60 text-white text-xs font-medium px-3 py-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+          <ZoomIn size={14} aria-hidden="true" />
+          Click to enlarge
+        </span>
+      </button>
+      <figcaption className="mt-3 text-sm text-forest-600/70 text-center">{caption}</figcaption>
+
+      {expanded && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 sm:p-8"
+          role="dialog"
+          aria-modal="true"
+          aria-label={alt}
+          onClick={() => setExpanded(false)}
+          onKeyDown={(e) => { if (e.key === 'Escape') setExpanded(false); }}
+        >
+          <button
+            type="button"
+            className="absolute top-4 right-4 text-white/80 hover:text-white text-sm font-medium px-4 py-2 rounded-full bg-white/10"
+            onClick={() => setExpanded(false)}
+          >
+            Close
+          </button>
+          <img
+            src={src}
+            alt={alt}
+            className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
+    </figure>
+  );
+}
 
 export default function Maps() {
   const [destinations, setDestinations] = useState<Destination[] | null>(null);
@@ -37,7 +94,7 @@ export default function Maps() {
     <>
       <Seo
         title="Safari Maps — Kruger & Private Reserves | Mabunda Travel & Tours"
-        description="Interactive maps of Kruger National Park and the surrounding private game reserves. Plan your safari with Mabunda Travel & Tours — Mpumalanga's local transfer experts."
+        description="Maps of Kruger National Park and the surrounding private game reserves. Plan your safari with Mabunda Travel & Tours — Mpumalanga's local transfer experts."
         path="/maps"
         jsonLd={MAPS_JSONLD}
       />
@@ -62,7 +119,7 @@ export default function Maps() {
         </div>
       </section>
 
-      {/* Map embed */}
+      {/* Kruger National Park map */}
       <section className="py-16 bg-white" aria-label="Kruger National Park map">
         <div className="max-w-6xl mx-auto px-5 sm:px-8">
           <Reveal>
@@ -70,28 +127,52 @@ export default function Maps() {
               Kruger National Park
             </h2>
             <p className="text-forest-600/70 text-sm mb-6 max-w-2xl">
-              Use the map below to explore the park boundaries, main gates, rest camps and surrounding private reserves.
+              The full park map showing main gates, rest camps, tar and gravel roads across all regions — from Pafuri in the north to Crocodile Bridge in the south.
             </p>
           </Reveal>
           <Reveal>
-            <div className="rounded-3xl overflow-hidden shadow-xl border border-gray-100">
-              <iframe
-                title="Kruger National Park map"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1847020.0!2d30.5!3d-23.5!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1ec549e5bade0b7f%3A0x0!2sKruger+National+Park!5e0!3m2!1sen!2sza!4v1699000000000!5m2!1sen!2sza"
-                width="100%"
-                height="480"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
+            <MapImage
+              src="/maps/kruger-national-park.gif"
+              alt="Full map of Kruger National Park showing gates, camps and roads"
+              caption="Kruger National Park — gates, rest camps and road network"
+            />
+          </Reveal>
+        </div>
+      </section>
+
+      {/* Private reserves map */}
+      <section className="py-16 bg-gray-50" aria-label="Private game reserves map">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8">
+          <Reveal>
+            <h2 className="font-display text-2xl sm:text-3xl font-bold text-forest-900 mb-2">
+              Private reserves &amp; Greater Kruger
+            </h2>
+            <p className="text-forest-600/70 text-sm mb-4 max-w-2xl">
+              The private reserves along Kruger&apos;s western boundary share unfenced borders with the park, allowing wildlife to roam freely. Most lodges in these reserves include guided game drives and transfers.
+            </p>
+            <div className="flex flex-wrap gap-2 mb-6">
+              {RESERVE_NAMES.map((name) => (
+                <span
+                  key={name}
+                  className="inline-block bg-forest-100 text-forest-700 text-xs font-medium px-2.5 py-1 rounded-full"
+                >
+                  {name}
+                </span>
+              ))}
             </div>
+          </Reveal>
+          <Reveal>
+            <MapImage
+              src="/maps/private-reserves.jpg"
+              alt="Map of private game reserves bordering Kruger National Park including Timbavati, Klaserie, Sabi Sand, Manyeleti, Thornybush and Kapama"
+              caption="Greater Kruger private reserves — Timbavati, Klaserie, Sabi Sand, Manyeleti, Thornybush, Kapama and more"
+            />
           </Reveal>
         </div>
       </section>
 
       {/* Private reserves grid */}
-      <section className="py-20 bg-gray-50" aria-label="Private game reserves">
+      <section className="py-20 bg-white" aria-label="Private game reserves">
         <div className="max-w-7xl mx-auto px-5 sm:px-8">
           <Reveal>
             <div className="text-center mb-12">
@@ -117,7 +198,7 @@ export default function Maps() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {destinations.map((dest) => (
                 <Reveal key={dest.id}>
-                  <article className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
+                  <article className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full flex flex-col border border-gray-100">
                     <div className="relative h-48 overflow-hidden">
                       {dest.images[0]?.url ? (
                         <img
@@ -166,7 +247,7 @@ export default function Maps() {
       </section>
 
       {/* Helper panel */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-gray-50">
         <div className="max-w-3xl mx-auto px-5 sm:px-8">
           <Reveal>
             <div className="bg-forest-50 rounded-3xl p-8 border border-forest-100 text-center">
