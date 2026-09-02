@@ -174,8 +174,17 @@ export interface Notification {
   message: string | null;
   resource_type: string | null;
   resource_id: string | null;
-  read: boolean;
+  /** Client-computed: whether the current admin has a matching notification_reads row. Not a DB column. */
+  read?: boolean;
   created_at: string;
+}
+
+export interface EmailTemplate {
+  key: string;
+  label: string;
+  subject: string;
+  body: string;
+  updated_at: string;
 }
 
 export interface MediaItem {

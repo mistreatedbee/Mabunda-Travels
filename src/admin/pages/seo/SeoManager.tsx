@@ -55,8 +55,18 @@ export default function SeoManager() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    let mounted = true;
     setLoading(true);
-    supabase.from('seo_pages').select('*').eq('path', selected.path).maybeSingle().then(({ data }) => {
+    supabase.from('seo_pages').select('*').eq('path', selected.path).maybeSingle().then(({ data, error }) => {
+      // Guard against a slower fetch for a tab the admin has since clicked away
+      // from resolving after a faster one and clobbering the form with stale data.
+      if (!mounted) return;
+      if (error) {
+        showError("Couldn't load SEO settings for this page. Please try again.");
+        setForm(EMPTY);
+        setLoading(false);
+        return;
+      }
       setForm(
         data
           ? {
@@ -72,6 +82,8 @@ export default function SeoManager() {
       );
       setLoading(false);
     });
+    return () => { mounted = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected.path]);
 
   function update<K extends keyof SeoFormState>(key: K, value: SeoFormState[K]) {
@@ -82,17 +94,20 @@ export default function SeoManager() {
     e.preventDefault();
     setSaving(true);
 
-    const { error } = await supabase.from('seo_pages').upsert({
-      path: selected.path,
-      title: form.title.trim() || null,
-      description: form.description.trim() || null,
-      og_title: form.og_title.trim() || null,
-      og_description: form.og_description.trim() || null,
-      og_image_url: form.og_image_url || null,
-      robots_index: form.robots_index,
-      canonical_url: form.canonical_url.trim() || null,
-      updated_by: admin?.id,
-    });
+    const { error } = await supabase.from('seo_pages').upsert(
+      {
+        path: selected.path,
+        title: form.title.trim() || null,
+        description: form.description.trim() || null,
+        og_title: form.og_title.trim() || null,
+        og_description: form.og_description.trim() || null,
+        og_image_url: form.og_image_url || null,
+        robots_index: form.robots_index,
+        canonical_url: form.canonical_url.trim() || null,
+        updated_by: admin?.id,
+      },
+      { onConflict: 'path' }
+    );
 
     setSaving(false);
 

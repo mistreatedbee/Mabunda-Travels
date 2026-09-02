@@ -2,24 +2,42 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bell, Inbox, Check } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useAuth } from './AuthContext';
 import type { Notification } from '../lib/types';
 
-/** Notification bell + dropdown, shared by the desktop and mobile admin topbars. */
+const RECENT_LIMIT = 15;
+
+/** Notification bell + dropdown, shared by the desktop and mobile admin topbars. Read state is per-admin. */
 export default function AdminTopbar({ variant = 'light' }: { variant?: 'light' | 'dark' }) {
   const navigate = useNavigate();
+  const { admin } = useAuth();
   const [open, setOpen] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
   const [notifications, setNotifications] = useState<Notification[] | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  async function refreshUnreadCount() {
-    const { count } = await supabase.from('notifications').select('*', { count: 'exact', head: true }).eq('read', false);
-    setUnreadCount(count ?? 0);
+  const unreadCount = notifications?.filter((n) => !n.read).length ?? 0;
+
+  async function load() {
+    if (!admin) return;
+    const { data: recent } = await supabase
+      .from('notifications')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(RECENT_LIMIT);
+
+    const ids = (recent ?? []).map((n) => n.id);
+    const { data: reads } = ids.length
+      ? await supabase.from('notification_reads').select('notification_id').eq('admin_id', admin.id).in('notification_id', ids)
+      : { data: [] };
+
+    const readIds = new Set((reads ?? []).map((r) => r.notification_id));
+    setNotifications((recent ?? []).map((n) => ({ ...n, read: readIds.has(n.id) })));
   }
 
   useEffect(() => {
-    refreshUnreadCount();
-  }, []);
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [admin?.id]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -32,17 +50,13 @@ export default function AdminTopbar({ variant = 'light' }: { variant?: 'light' |
   async function togglePanel() {
     const next = !open;
     setOpen(next);
-    if (next) {
-      const { data } = await supabase.from('notifications').select('*').order('created_at', { ascending: false }).limit(10);
-      setNotifications((data ?? []) as Notification[]);
-    }
+    if (next) load();
   }
 
   async function handleSelect(n: Notification) {
-    if (!n.read) {
-      await supabase.from('notifications').update({ read: true }).eq('id', n.id);
+    if (!n.read && admin) {
+      await supabase.from('notification_reads').insert({ notification_id: n.id, admin_id: admin.id });
       setNotifications((prev) => prev?.map((x) => (x.id === n.id ? { ...x, read: true } : x)) ?? null);
-      setUnreadCount((c) => Math.max(0, c - 1));
     }
     setOpen(false);
     if (n.resource_type === 'bookings' && n.resource_id) {
@@ -51,9 +65,11 @@ export default function AdminTopbar({ variant = 'light' }: { variant?: 'light' |
   }
 
   async function markAllRead() {
-    await supabase.from('notifications').update({ read: true }).eq('read', false);
+    if (!admin || !notifications) return;
+    const unreadIds = notifications.filter((n) => !n.read).map((n) => n.id);
+    if (!unreadIds.length) return;
+    await supabase.from('notification_reads').insert(unreadIds.map((id) => ({ notification_id: id, admin_id: admin.id })));
     setNotifications((prev) => prev?.map((x) => ({ ...x, read: true })) ?? null);
-    setUnreadCount(0);
   }
 
   return (

@@ -39,6 +39,10 @@ export function useContentList<T>({
   const [error, setError] = useState<string | null>(null);
 
   const filtersKey = filters ? JSON.stringify(filters) : '';
+  // searchColumns is often passed as an inline array literal (e.g. ['name', 'email']),
+  // a new reference on every render — serialize it so the effect below only re-fires
+  // when the actual columns change, not on every render.
+  const searchColumnsKey = Array.isArray(searchColumns) ? searchColumns.join(',') : searchColumns;
 
   const fetchPage = useCallback(async () => {
     setLoading(true);
@@ -77,7 +81,7 @@ export function useContentList<T>({
     }
     setLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [table, select, search, searchColumns, statusColumn, statusFilter, filtersKey, orderColumn, orderAscending, page]);
+  }, [table, select, search, searchColumnsKey, statusColumn, statusFilter, filtersKey, orderColumn, orderAscending, page]);
 
   useEffect(() => {
     const handle = window.setTimeout(fetchPage, search ? 300 : 0);
