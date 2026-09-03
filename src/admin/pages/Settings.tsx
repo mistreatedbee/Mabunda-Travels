@@ -134,15 +134,15 @@ export default function Settings() {
   return (
     <div>
       <AdminPageHeader
-        title="Business Settings"
-        subtitle="Contact details, hours and social links used across the whole website."
+        title="Business Details"
+        subtitle="Your phone number, email, address, opening hours and social media links — used across the whole website."
       />
 
       <form onSubmit={handleSubmit} className="space-y-6" noValidate>
         <section className="bg-white rounded-2xl border border-gray-100 p-5 sm:p-6 space-y-5">
           <h2 className="font-display font-semibold text-forest-900">Contact details</h2>
           <div className="grid sm:grid-cols-2 gap-5">
-            <Field label="Phone (display)" htmlFor="s-phone" hint="e.g. 076 812 3456">
+            <Field label="Phone (display)" htmlFor="s-phone" hint="e.g. +27 70 589 3439">
               <TextInput id="s-phone" value={form.phone} onChange={(e) => update('phone', e.target.value)} />
             </Field>
             <Field label="Phone (international)" htmlFor="s-phone-intl" hint="e.g. +27768123456 — used for tel: links">

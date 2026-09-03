@@ -73,6 +73,12 @@ export default function Seo({ title, description, path, ogImage, jsonLd, noindex
       removeMeta('property', 'og:image');
     }
 
+    if (override?.meta_keywords) {
+      setMeta('name', 'keywords', override.meta_keywords);
+    } else {
+      removeMeta('name', 'keywords');
+    }
+
     let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
     if (!canonical) {
       canonical = document.createElement('link');

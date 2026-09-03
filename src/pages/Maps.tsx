@@ -119,29 +119,8 @@ export default function Maps() {
         </div>
       </section>
 
-      {/* Kruger National Park map */}
-      <section className="py-16 bg-white" aria-label="Kruger National Park map">
-        <div className="max-w-6xl mx-auto px-5 sm:px-8">
-          <Reveal>
-            <h2 className="font-display text-2xl sm:text-3xl font-bold text-forest-900 mb-2">
-              Kruger National Park
-            </h2>
-            <p className="text-forest-600/70 text-sm mb-6 max-w-2xl">
-              The full park map showing main gates, rest camps, tar and gravel roads across all regions — from Pafuri in the north to Crocodile Bridge in the south.
-            </p>
-          </Reveal>
-          <Reveal>
-            <MapImage
-              src="/maps/kruger-national-park.gif"
-              alt="Full map of Kruger National Park showing gates, camps and roads"
-              caption="Kruger National Park — gates, rest camps and road network"
-            />
-          </Reveal>
-        </div>
-      </section>
-
       {/* Private reserves map */}
-      <section className="py-16 bg-gray-50" aria-label="Private game reserves map">
+      <section className="py-16 bg-white" aria-label="Private game reserves map">
         <div className="max-w-6xl mx-auto px-5 sm:px-8">
           <Reveal>
             <h2 className="font-display text-2xl sm:text-3xl font-bold text-forest-900 mb-2">
@@ -172,7 +151,7 @@ export default function Maps() {
       </section>
 
       {/* Private reserves grid */}
-      <section className="py-20 bg-white" aria-label="Private game reserves">
+      <section className="py-20 bg-gray-50" aria-label="Private game reserves">
         <div className="max-w-7xl mx-auto px-5 sm:px-8">
           <Reveal>
             <div className="text-center mb-12">

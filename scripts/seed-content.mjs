@@ -172,7 +172,7 @@ const FAQS = [
     display_order: 2,
     question: 'What areas do you cover?',
     answer:
-      'Mpumalanga is our home base. We provide transfers from Hoedspruit Eastgate Airport, KMIA (Nelspruit), Skukuza Airport, and OR Tambo International Airport in Johannesburg. We also transfer guests to lodges across the Lowveld\'s private game reserves and Kruger National Park. If your pickup or drop-off point is not listed here, please enquire — we will gladly provide a quote.',
+      'Mpumalanga is our home base. Our safari tours and game drives operate exclusively in Kruger National Park. We provide transfers from Hoedspruit Eastgate Airport, KMIA (Nelspruit), Skukuza Airport, and OR Tambo International Airport in Johannesburg to Kruger gates, rest camps and nearby towns. If your pickup or drop-off point is not listed here, please enquire — we will gladly provide a quote.',
   },
   {
     category: 'general',
@@ -233,7 +233,7 @@ const FAQS = [
 ];
 
 const SETTINGS = {
-  phone: '070 589 3439',
+  phone: '+27 70 589 3439',
   phone_intl: '+27705893439',
   whatsapp_number: '+27705893439',
   hours: [

@@ -82,6 +82,9 @@ textarea:focus-visible {
 
 .activity-card-back {
   transform: rotateY(180deg);
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ── Hero / general animations ────────────────────────────────────────────── */

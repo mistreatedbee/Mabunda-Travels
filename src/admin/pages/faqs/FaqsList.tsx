@@ -79,8 +79,8 @@ export default function FaqsList() {
   return (
     <div>
       <AdminPageHeader
-        title="FAQs"
-        subtitle="Manage frequently asked questions shown on the Home and Contact pages."
+        title="Questions & Answers"
+        subtitle="Common questions visitors see on the homepage and contact page. Turn on Published to show them."
         action={
           <Link to="/admin/faqs/new" className="inline-flex items-center gap-2 bg-forest-800 hover:bg-forest-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors">
             <Plus size={16} aria-hidden="true" />

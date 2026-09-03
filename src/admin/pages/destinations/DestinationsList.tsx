@@ -38,8 +38,8 @@ export default function DestinationsList() {
   return (
     <div>
       <AdminPageHeader
-        title="Destinations"
-        subtitle="Manage the reserves and destinations featured on the Maps page."
+        title="Maps & Game Reserves"
+        subtitle="Private reserves and destinations listed on your Maps page."
         action={
           <Link to="/admin/destinations/new" className="inline-flex items-center gap-2 bg-forest-800 hover:bg-forest-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors">
             <Plus size={16} aria-hidden="true" />

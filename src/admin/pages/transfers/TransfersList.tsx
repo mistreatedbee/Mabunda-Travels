@@ -42,8 +42,8 @@ export default function TransfersList() {
   return (
     <div>
       <AdminPageHeader
-        title="Transfers"
-        subtitle="Manage airport, private and custom transfer services."
+        title="Transfer Services"
+        subtitle="Airport and private transfers shown on your Services page."
         action={
           <Link to="/admin/transfers/new" className="inline-flex items-center gap-2 bg-forest-800 hover:bg-forest-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors">
             <Plus size={16} aria-hidden="true" />

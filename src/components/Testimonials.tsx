@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Star, Quote } from 'lucide-react';
 import { getFeaturedTestimonials } from '../lib/queries';
+import type { HomepageContentData } from '../lib/homepage';
 import type { Testimonial } from '../lib/types';
 import Reveal from './Reveal';
 
@@ -19,7 +20,7 @@ function Stars({ rating }: { rating: number }) {
  * nothing until there is at least one published+featured testimonial —
  * no placeholder or fabricated reviews.
  */
-export default function Testimonials() {
+export default function Testimonials({ section }: { section: HomepageContentData['testimonials'] }) {
   const [testimonials, setTestimonials] = useState<Testimonial[] | null>(null);
 
   useEffect(() => {
@@ -37,10 +38,10 @@ export default function Testimonials() {
         <Reveal>
           <div className="text-center mb-12">
             <span className="inline-block bg-white/10 text-gold text-xs font-semibold uppercase tracking-[0.15em] px-3 py-1.5 rounded-full mb-4">
-              What travellers say
+              {section.eyebrow}
             </span>
             <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-3">
-              Trusted by our travellers
+              {section.title}
             </h2>
           </div>
         </Reveal>

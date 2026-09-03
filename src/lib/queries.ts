@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { HOMEPAGE_DEFAULTS, HOMEPAGE_CONTENT_PATH, mergeHomepageContent, type HomepageContentData } from './homepage';
 import type { Destination, Faq, Settings, Testimonial, Tour, Transfer } from './types';
 
 /**
@@ -92,4 +93,23 @@ export async function getFeaturedTestimonials(): Promise<Testimonial[]> {
     return [];
   }
   return (data ?? []) as Testimonial[];
+}
+
+export async function getHomepageContent(): Promise<HomepageContentData> {
+  const { data, error } = await supabase
+    .from('seo_pages')
+    .select('description')
+    .eq('path', HOMEPAGE_CONTENT_PATH)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Failed to load homepage content:', error.message);
+    return HOMEPAGE_DEFAULTS;
+  }
+  if (!data?.description) return HOMEPAGE_DEFAULTS;
+  try {
+    return mergeHomepageContent(JSON.parse(data.description) as Partial<HomepageContentData>);
+  } catch {
+    return HOMEPAGE_DEFAULTS;
+  }
 }

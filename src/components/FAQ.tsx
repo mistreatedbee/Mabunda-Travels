@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Plus, Minus, Target, Eye, Heart, ArrowRight, Loader2 } from 'lucide-react';
 import { KRUGER_GATE_MONTHS, KRUGER_MONTHLY_GATES } from '../lib/data';
 import { getPublishedFaqs } from '../lib/queries';
+import type { HomepageFaqIntro } from '../lib/homepage';
 import type { Faq } from '../lib/types';
 import FaqAnswer from './FaqAnswer';
 
@@ -10,6 +11,8 @@ interface FAQProps {
   /** Which FAQ category to show — omit for all published FAQs. */
   category?: Faq['category'];
   showAbout?: boolean;
+  /** Homepage-managed intro copy for the left column. */
+  intro?: HomepageFaqIntro;
 }
 
 function KrugerGateTimes() {
@@ -77,7 +80,7 @@ function KrugerGateTimes() {
   );
 }
 
-export default function FAQ({ category, showAbout = true }: FAQProps) {
+export default function FAQ({ category, showAbout = true, intro }: FAQProps) {
   const [open, setOpen] = useState<number | null>(0);
   const [items, setItems] = useState<Faq[] | null>(null);
 
@@ -142,19 +145,16 @@ export default function FAQ({ category, showAbout = true }: FAQProps) {
         <div className="grid lg:grid-cols-5 gap-12">
           {/* Left: About + values + gate times */}
           <div className="lg:col-span-2">
-            <span className="text-gold font-semibold text-sm tracking-[0.2em] uppercase">About Us</span>
+            <span className="text-gold font-semibold text-sm tracking-[0.2em] uppercase">{intro?.eyebrow ?? 'About Us'}</span>
             <h2 className="font-display text-3xl sm:text-4xl text-forest-900 font-bold mt-2 mb-5 leading-tight">
-              Connecting travellers with extraordinary destinations
+              {intro?.title ?? 'Connecting travellers with extraordinary destinations'}
             </h2>
             <p className="text-forest-600/80 text-base leading-relaxed mb-4">
-              Mabunda Travel &amp; Tours creates memorable travel experiences by
-              connecting travellers with beautiful destinations, cultural
-              experiences, and personalised adventures across South Africa.
+              {intro?.description ?? 'Mabunda Travel & Tours creates memorable travel experiences by connecting travellers with beautiful destinations, cultural experiences, and personalised adventures across South Africa.'}
             </p>
             <p className="text-forest-600/70 text-sm leading-relaxed mb-6">
-              Founded by Marvin Mabunda in May 2025, we are a registered private
-              company based in Acornhoek, Mpumalanga — proudly serving holiday
-              travellers, groups, and corporate clients.
+              {intro?.about_paragraph_2 ??
+                'Founded by Marvin Mabunda in May 2025, we are a registered private company based in Acornhoek, Mpumalanga — proudly serving holiday travellers, groups, and corporate clients.'}
             </p>
             <Link
               to="/about"

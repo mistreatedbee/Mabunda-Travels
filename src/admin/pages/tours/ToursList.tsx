@@ -66,8 +66,8 @@ export default function ToursList() {
   return (
     <div>
       <AdminPageHeader
-        title="Tours"
-        subtitle="Manage guided tours and experiences shown on the website."
+        title="Activities & Tours"
+        subtitle="These are the activity flip cards on your homepage. Set status to Published to show them on the website."
         action={
           <Link to="/admin/tours/new" className="inline-flex items-center gap-2 bg-forest-800 hover:bg-forest-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors">
             <Plus size={16} aria-hidden="true" />

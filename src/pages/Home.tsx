@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import Seo from '../components/Seo';
 import Hero from '../components/Hero';
 import TrustedBy from '../components/TrustedBy';
@@ -7,6 +8,8 @@ import Testimonials from '../components/Testimonials';
 import FAQ from '../components/FAQ';
 import CTASection from '../components/CTASection';
 import { COMPANY } from '../lib/company';
+import { HOMEPAGE_DEFAULTS } from '../lib/homepage';
+import { getHomepageContent } from '../lib/queries';
 
 const ORGANIZATION_JSONLD = {
   '@context': 'https://schema.org',
@@ -30,6 +33,14 @@ const ORGANIZATION_JSONLD = {
 };
 
 export default function Home() {
+  const [content, setContent] = useState(HOMEPAGE_DEFAULTS);
+
+  useEffect(() => {
+    let mounted = true;
+    getHomepageContent().then((data) => { if (mounted) setContent(data); });
+    return () => { mounted = false; };
+  }, []);
+
   return (
     <>
       <Seo
@@ -38,13 +49,13 @@ export default function Home() {
         path="/"
         jsonLd={ORGANIZATION_JSONLD}
       />
-      <Hero />
-      <TrustedBy />
-      <DealsSection />
-      <LodgesSection />
-      <Testimonials />
-      <FAQ />
-      <CTASection />
+      <Hero content={content.hero} />
+      <TrustedBy labels={content.trusted_bar} />
+      <DealsSection section={content.experiences} />
+      <LodgesSection section={content.services} />
+      <Testimonials section={content.testimonials} />
+      <FAQ intro={content.faq} />
+      <CTASection title={content.cta.title} text={content.cta.text} />
     </>
   );
 }

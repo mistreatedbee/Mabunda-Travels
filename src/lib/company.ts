@@ -3,7 +3,7 @@ export const COMPANY = {
   legalName:   'Mabunda Travel & Tours (Pty) Ltd',
   regNumber:   '2025/419039/07',
   tagline:     'Journey. Explore. Experience.',
-  phone:       '070 589 3439',
+  phone:       '+27 70 589 3439',
   phoneIntl:   '+27705893439',
   email:       'bookings@mabundatravel.co.za',
   address:     'Acornhoek, Mpumalanga, 1360, South Africa',

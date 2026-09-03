@@ -7,7 +7,7 @@
 -- ---------------------------------------------------------------------------
 
 update settings set
-  phone           = '070 589 3439',
+  phone           = '+27 70 589 3439',
   phone_intl      = '+27705893439',
   whatsapp_number = '+27705893439',
   hours           = '[
@@ -101,7 +101,7 @@ select question, answer, category, display_order, true
 from (values
   ('How do I book a trip?', 'Send us an enquiry via the contact form on this website, email us at bookings@mabundatravel.co.za, or message us on WhatsApp with your travel dates, group size and what you have in mind. We will reply with a personalised quote and itinerary options.', 'booking', 0),
   ('Do you cater for group travel?', 'Absolutely. We specialise in group travel for schools, churches, stokvels, corporate teams, social clubs and wedding groups. We coordinate transport, timing and logistics so your group travels together smoothly — without arranging accommodation on your behalf unless specifically requested.', 'booking', 1),
-  ('What areas do you cover?', 'Mpumalanga is our home base. We provide transfers from Hoedspruit Eastgate Airport, KMIA (Nelspruit), Skukuza Airport, and OR Tambo International Airport in Johannesburg. We also transfer guests to lodges across the Lowveld''s private game reserves and Kruger National Park. If your pickup or drop-off point is not listed here, please enquire — we will gladly provide a quote.', 'general', 2),
+  ('What areas do you cover?', 'Mpumalanga is our home base. Our safari tours and game drives operate exclusively in Kruger National Park. We provide transfers from Hoedspruit Eastgate Airport, KMIA (Nelspruit), Skukuza Airport, and OR Tambo International Airport in Johannesburg to Kruger gates, rest camps and nearby towns. If your pickup or drop-off point is not listed here, please enquire — we will gladly provide a quote.', 'general', 2),
   ('When is the best time to visit Kruger National Park?', 'The dry winter months (May to September) are generally best for wildlife viewing — vegetation is thinner and animals gather at water sources. Summer (October to March) is lush and green with excellent birding, though it can be hot and humid. Both seasons offer rewarding safaris; we can advise based on your priorities.', 'general', 3),
   ('Is Kruger National Park a malaria risk area?', 'Yes, the Lowveld including Kruger is a malaria area. We strongly recommend consulting your doctor or travel clinic about prophylaxis before your trip. The risk is highest during the wet season from October to May, peaking between February and May.', 'general', 4),
   ('What animals can I see in Kruger National Park?', 'Kruger is home to the Big Five — lion, leopard, elephant, buffalo and rhino — along with cheetah, wild dog, hippo, crocodile and over 500 bird species. Remember that Kruger is a vast wilderness, not a zoo; sightings depend on season, area and luck, which is part of the adventure.', 'general', 5),

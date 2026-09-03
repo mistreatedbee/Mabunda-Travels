@@ -204,6 +204,7 @@ export interface SeoPageOverride {
   path: string;
   title: string | null;
   description: string | null;
+  meta_keywords: string | null;
   og_title: string | null;
   og_description: string | null;
   og_image_url: string | null;

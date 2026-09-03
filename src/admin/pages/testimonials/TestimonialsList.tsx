@@ -47,8 +47,8 @@ export default function TestimonialsList() {
   return (
     <div>
       <AdminPageHeader
-        title="Testimonials"
-        subtitle="Manage customer reviews shown on the Home page."
+        title="Customer Reviews"
+        subtitle="Add reviews from happy travellers. Turn on Featured to show a review on the homepage."
         action={
           <Link to="/admin/testimonials/new" className="inline-flex items-center gap-2 bg-forest-800 hover:bg-forest-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors">
             <Plus size={16} aria-hidden="true" />

@@ -35,8 +35,8 @@ export default function EnquiriesList() {
   return (
     <div>
       <AdminPageHeader
-        title="Enquiries"
-        subtitle="Customer bookings and enquiries submitted through the website."
+        title="Customer Enquiries"
+        subtitle="When someone fills in the booking form on your website, it appears here."
         action={
           <button
             onClick={() => setShowArchived((v) => !v)}

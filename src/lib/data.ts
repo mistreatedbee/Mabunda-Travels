@@ -15,12 +15,12 @@ export const SERVICES: Service[] = [
   {
     icon: Compass,
     title: 'Safari Experiences',
-    text: 'Expert-guided game drives and wildlife encounters in Kruger and the private reserves.',
-    detail: "Step into Africa's wild heart with guides who know the Lowveld intimately. Whether it's your first elephant sighting or you're chasing your hundredth leopard, we match you with the right vehicle, the right reserve, and the right time of day for the most rewarding wildlife moments.",
+    text: 'Expert-guided game drives and wildlife encounters in Kruger National Park.',
+    detail: "Step into Africa's wild heart with guides who know Kruger intimately. Whether it's your first elephant sighting or you're chasing your hundredth leopard, we match you with the right vehicle, the right area of the park, and the right time of day for the most rewarding wildlife moments.",
     points: [
       'Morning, sunset & full-day game drives',
       'Private vehicle for intimate group experiences',
-      'Kruger National Park & surrounding private reserves',
+      'Kruger National Park — all regions and rest camps',
       'Photography safaris & Big Five tracking',
     ],
   },

@@ -26,7 +26,6 @@ const Dashboard = lazy(() => import('./admin/pages/Dashboard'));
 const EnquiriesList = lazy(() => import('./admin/pages/enquiries/EnquiriesList'));
 const EnquiryDetail = lazy(() => import('./admin/pages/enquiries/EnquiryDetail'));
 const Settings = lazy(() => import('./admin/pages/Settings'));
-const MediaLibrary = lazy(() => import('./admin/pages/media/MediaLibrary'));
 const SeoManager = lazy(() => import('./admin/pages/seo/SeoManager'));
 const ToursList = lazy(() => import('./admin/pages/tours/ToursList'));
 const TourForm = lazy(() => import('./admin/pages/tours/TourForm'));
@@ -39,7 +38,6 @@ const FaqForm = lazy(() => import('./admin/pages/faqs/FaqForm'));
 const TestimonialsList = lazy(() => import('./admin/pages/testimonials/TestimonialsList'));
 const TestimonialForm = lazy(() => import('./admin/pages/testimonials/TestimonialForm'));
 const Admins = lazy(() => import('./admin/pages/Admins'));
-const AuditLog = lazy(() => import('./admin/pages/AuditLog'));
 
 function PageLoader() {
   return (
@@ -91,6 +89,13 @@ export default function App() {
                       }
                     >
                       <Route index element={<Dashboard />} />
+                      <Route path="homepage" element={
+                          <ProtectedRoute allowedRoles={['super_admin', 'admin']}>
+                            <SeoManager />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route path="seo" element={<Navigate to="/admin/homepage" replace />} />
                       <Route path="enquiries" element={<EnquiriesList />} />
                       <Route path="enquiries/:id" element={<EnquiryDetail />} />
                       <Route
@@ -101,15 +106,7 @@ export default function App() {
                           </ProtectedRoute>
                         }
                       />
-                      <Route
-                        path="seo"
-                        element={
-                          <ProtectedRoute allowedRoles={['super_admin', 'admin']}>
-                            <SeoManager />
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route path="media" element={<MediaLibrary />} />
+                      <Route path="media" element={<Navigate to="/admin" replace />} />
                       <Route path="tours" element={<ToursList />} />
                       <Route path="tours/new" element={<TourForm />} />
                       <Route path="tours/:id/edit" element={<TourForm />} />
@@ -135,11 +132,7 @@ export default function App() {
                       />
                       <Route
                         path="audit-log"
-                        element={
-                          <ProtectedRoute allowedRoles={['super_admin']}>
-                            <AuditLog />
-                          </ProtectedRoute>
-                        }
+                        element={<Navigate to="/admin" replace />}
                       />
                       <Route path="*" element={<Navigate to="/admin" replace />} />
                     </Route>

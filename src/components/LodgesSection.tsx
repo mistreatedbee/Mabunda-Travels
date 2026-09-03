@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { SERVICES } from '../lib/data';
+import type { HomepageSectionHeader } from '../lib/homepage';
 import Reveal from './Reveal';
 
-export default function LodgesSection() {
+export default function LodgesSection({ section }: { section: HomepageSectionHeader }) {
   return (
     <section id="services-overview" aria-label="Our services" className="py-20 bg-forest-50">
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
@@ -11,13 +12,13 @@ export default function LodgesSection() {
         <Reveal>
           <div className="text-center mb-12">
             <span className="inline-block bg-forest-100 text-forest-700 text-xs font-semibold uppercase tracking-[0.15em] px-3 py-1.5 rounded-full mb-4">
-              Services
+              {section.eyebrow}
             </span>
             <h2 className="font-display text-3xl sm:text-4xl font-bold text-forest-900 mb-3">
-              How we can help you
+              {section.title}
             </h2>
             <p className="text-forest-500 max-w-xl mx-auto text-base">
-              Whether you need a seamless airport transfer or a fully crafted safari adventure, we handle everything from first enquiry to final drop-off.
+              {section.description}
             </p>
           </div>
         </Reveal>
