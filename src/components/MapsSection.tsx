@@ -80,9 +80,15 @@ interface MapsSectionProps {
   showIntro?: boolean;
   /** Link to the dedicated Maps page. */
   showMapsPageLink?: boolean;
+  /** Hide the private reserves map (homepage shows Kruger map only). */
+  hidePrivateReservesMap?: boolean;
 }
 
-export default function MapsSection({ showIntro = false, showMapsPageLink = false }: MapsSectionProps) {
+export default function MapsSection({
+  showIntro = false,
+  showMapsPageLink = false,
+  hidePrivateReservesMap = false,
+}: MapsSectionProps) {
   const [destinations, setDestinations] = useState<Destination[] | null>(null);
 
   useEffect(() => {
@@ -102,10 +108,10 @@ export default function MapsSection({ showIntro = false, showMapsPageLink = fals
                   Safari Maps
                 </span>
                 <h2 className="font-display text-3xl sm:text-4xl font-bold text-forest-900 mb-3">
-                  Kruger &amp; the private reserves
+                  Kruger National Park
                 </h2>
                 <p className="text-forest-500 max-w-2xl mx-auto text-base">
-                  Plan your safari with maps of Kruger National Park and the surrounding private game reserves in the Greater Kruger.
+                  Plan your safari with the full Kruger map — gates, rest camps and roads across the park.
                 </p>
               </div>
             </Reveal>
@@ -146,6 +152,7 @@ export default function MapsSection({ showIntro = false, showMapsPageLink = fals
         </div>
       </section>
 
+      {!hidePrivateReservesMap && (
       <section className="py-16 bg-gray-50" aria-label="Private game reserves map">
         <div className="max-w-6xl mx-auto px-5 sm:px-8">
           <Reveal>
@@ -188,6 +195,7 @@ export default function MapsSection({ showIntro = false, showMapsPageLink = fals
           )}
         </div>
       </section>
+      )}
 
       <section className="py-20 bg-white" aria-label="Private game reserves">
         <div className="max-w-7xl mx-auto px-5 sm:px-8">

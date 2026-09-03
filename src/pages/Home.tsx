@@ -54,7 +54,7 @@ export default function Home() {
       <TrustedBy labels={content.trusted_bar} />
       <DealsSection section={content.experiences} />
       <LodgesSection section={content.services} />
-      <MapsSection showIntro />
+      <MapsSection showIntro hidePrivateReservesMap />
       <Testimonials section={content.testimonials} />
       <FAQ intro={content.faq} />
       <CTASection title={content.cta.title} text={content.cta.text} />
