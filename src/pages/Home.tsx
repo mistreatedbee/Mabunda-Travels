@@ -4,7 +4,6 @@ import Hero from '../components/Hero';
 import TrustedBy from '../components/TrustedBy';
 import DealsSection from '../components/DealsSection';
 import LodgesSection from '../components/LodgesSection';
-import MapsSection from '../components/MapsSection';
 import Testimonials from '../components/Testimonials';
 import FAQ from '../components/FAQ';
 import CTASection from '../components/CTASection';
@@ -54,7 +53,6 @@ export default function Home() {
       <TrustedBy labels={content.trusted_bar} />
       <DealsSection section={content.experiences} />
       <LodgesSection section={content.services} />
-      <MapsSection showIntro hidePrivateReservesMap />
       <Testimonials section={content.testimonials} />
       <FAQ intro={content.faq} />
       <CTASection title={content.cta.title} text={content.cta.text} />

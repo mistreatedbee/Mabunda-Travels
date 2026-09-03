@@ -75,20 +75,7 @@ export function MapImage({ src, alt, caption }: { src: string; alt: string; capt
   );
 }
 
-interface MapsSectionProps {
-  /** Show intro heading — use on homepage; Maps page uses PageHeader instead. */
-  showIntro?: boolean;
-  /** Link to the dedicated Maps page. */
-  showMapsPageLink?: boolean;
-  /** Hide the private reserves map (homepage shows Kruger map only). */
-  hidePrivateReservesMap?: boolean;
-}
-
-export default function MapsSection({
-  showIntro = false,
-  showMapsPageLink = false,
-  hidePrivateReservesMap = false,
-}: MapsSectionProps) {
+export default function MapsSection() {
   const [destinations, setDestinations] = useState<Destination[] | null>(null);
 
   useEffect(() => {
@@ -99,27 +86,7 @@ export default function MapsSection({
 
   return (
     <>
-      {showIntro && (
-        <section id="maps" aria-label="Safari maps" className="pt-20 pb-0 bg-white">
-          <div className="max-w-7xl mx-auto px-5 sm:px-8">
-            <Reveal>
-              <div className="text-center mb-10">
-                <span className="inline-block bg-forest-50 text-forest-700 text-xs font-semibold uppercase tracking-[0.15em] px-3 py-1.5 rounded-full mb-4">
-                  Safari Maps
-                </span>
-                <h2 className="font-display text-3xl sm:text-4xl font-bold text-forest-900 mb-3">
-                  Kruger National Park
-                </h2>
-                <p className="text-forest-500 max-w-2xl mx-auto text-base">
-                  Plan your safari with the full Kruger map — gates, rest camps and roads across the park.
-                </p>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-      )}
-
-      <section className={`bg-forest-900 py-10${showIntro ? '' : ''}`} aria-label="Kruger National Park statistics">
+      <section className="bg-forest-900 py-10" aria-label="Kruger National Park statistics">
         <div className="max-w-5xl mx-auto px-5 sm:px-8">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
             {STATS.map((s) => (
@@ -144,7 +111,7 @@ export default function MapsSection({
           </Reveal>
           <Reveal>
             <MapImage
-              src="/maps/kruger-national-park.gif"
+              src="/maps/kruger-national-park.png"
               alt="Full map of Kruger National Park showing gates, camps and roads"
               caption="Kruger National Park — gates, rest camps and road network"
             />
@@ -152,7 +119,6 @@ export default function MapsSection({
         </div>
       </section>
 
-      {!hidePrivateReservesMap && (
       <section className="py-16 bg-gray-50" aria-label="Private game reserves map">
         <div className="max-w-6xl mx-auto px-5 sm:px-8">
           <Reveal>
@@ -180,22 +146,8 @@ export default function MapsSection({
               caption="Greater Kruger private reserves — Timbavati, Klaserie, Sabi Sand, Manyeleti, Thornybush, Kapama and more"
             />
           </Reveal>
-          {showMapsPageLink && (
-            <Reveal>
-              <div className="text-center mt-8">
-                <Link
-                  to="/maps"
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-forest-700 hover:text-gold-dark border border-gray-200 px-5 py-2.5 rounded-full hover:bg-forest-50 transition-colors"
-                >
-                  Open full Maps page
-                  <ArrowRight size={16} aria-hidden="true" />
-                </Link>
-              </div>
-            </Reveal>
-          )}
         </div>
       </section>
-      )}
 
       <section className="py-20 bg-white" aria-label="Private game reserves">
         <div className="max-w-7xl mx-auto px-5 sm:px-8">
